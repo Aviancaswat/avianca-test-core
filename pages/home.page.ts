@@ -61,6 +61,7 @@ const HomePage: THomePage = {
             await page.locator('button#originBtn').click({ delay: helper.getRandomDelay() });
             await origen.fill(copys['ciudad_origen'], { delay: helper.getRandomDelay() });
             await origen.press('Enter');
+            await page.waitForTimeout(1500);
             await (page.locator('id=' + copys['ciudad_origen'])).click({ delay: helper.getRandomDelay() })
             await helper.takeScreenshot('ciudad-origen');
             await page.waitForTimeout(2000);
