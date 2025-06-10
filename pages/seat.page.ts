@@ -95,15 +95,13 @@ const SeatPage: TSeatPage = {
         }
     },
  
- 
     async run(): Promise<void> {
  
         const {
             seleccionar_asientos_ida,
             confirmar_asientos_ida,
             seleccionar_asientos_regreso,
-            ir_a_pagar
-           
+            ir_a_pagar,
         } = SeatPage;
  
         console.log("Run ejecutado");
