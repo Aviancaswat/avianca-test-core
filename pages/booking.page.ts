@@ -99,7 +99,7 @@ const BookingPage: TBookingPage = {
             await page.waitForSelector(".passenger_data_group");
         }
         catch (error) {
-            console.error("FLIGHTS => Ocurrió un error en click a continuar a flujo de pasajeros. Error: ", error);
+            console.error("BOOKINGPAGE => Ocurrió un error en click a continuar a flujo de pasajeros. Error: ", error);
             throw error;
         }
     },
