@@ -12,9 +12,6 @@ const AviancaCore = {
             const { chromium } = require("playwright-extra");
             browser = await chromium.launch({
                 headless: g.headless,
-                screenshot: 'on',
-                video: 'on',
-                ignoreHTTPSErrors: true,
                 args: [
                     '--disable-http2',
                     '--enable-webgl',
