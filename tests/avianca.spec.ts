@@ -3,9 +3,9 @@ import { AviancaCore } from '../core/avianca.core';
 import type { THomePage } from '../pages/home.page';
 import type { TBookingPage } from '../pages/booking.page';
 import type { TPassengerPage } from "../pages/passenger.page";
-import { ServicesPage, type TServicesPage } from '../pages/services.page';
+import { TServicesPage } from '../pages/services.page';
 import { PlaywrightHelper as helper } from "../helpers/avianca.helper";
-import { HomePage, BookingPage, PassengerPage } from "../pages/index";
+import { HomePage, BookingPage, PassengerPage, ServicesPage } from "../pages/index";
 
 test.describe("Test End to End Avianca", () => {
 
