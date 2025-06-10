@@ -5,7 +5,7 @@ import type { TBookingPage } from '../pages/booking.page';
 import type { TPassengerPage } from "../pages/passenger.page";
 import { TServicesPage } from '../pages/services.page';
 import { PlaywrightHelper as helper } from "../helpers/avianca.helper";
-import { HomePage, BookingPage, PassengerPage, ServicesPage } from "../pages/index";
+import { HomePage, BookingPage, PassengerPage, ServicesPage, SeatPage, TSeatPage } from "../pages/index";
 
 test.describe("Test End to End Avianca", () => {
 
@@ -14,6 +14,7 @@ test.describe("Test End to End Avianca", () => {
   let bookingPage: TBookingPage = BookingPage;
   let passengerPage: TPassengerPage = PassengerPage;
   let servicesPage: TServicesPage = ServicesPage;
+  let seatPage: TSeatPage = SeatPage;
 
   test.beforeEach(async () => {
     await AviancaCore.initializeBrowser();
@@ -24,6 +25,7 @@ test.describe("Test End to End Avianca", () => {
       bookingPage.initPage(page);
       passengerPage.initPage(page);
       servicesPage.initPage(page);
+      seatPage.initPage(page);
     }
   });
 
@@ -38,5 +40,6 @@ test.describe("Test End to End Avianca", () => {
     await bookingPage.run();
     await passengerPage.run();
     await servicesPage.run();
+    await seatPage.run();
   });
 });
