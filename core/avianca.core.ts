@@ -51,7 +51,7 @@ const AviancaCore = {
                 javaScriptEnabled: true,
                 permissions: [],
                 recordVideo: {
-                    dir: 'test-results/videos/', // Carpeta donde se guardarán los videos
+                    dir: 'test-results/videos/',
                     size: { width: 1280, height: 720 }
                 },
                 extraHTTPHeaders: {

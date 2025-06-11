@@ -22,8 +22,6 @@ const PaymentPage: TPaymentPage = {
     try {
       await page.waitForSelector("input#email", { timeout: 120_000 });
 
-      // const getRandomDelay = () => Math.floor(Math.random() * 500 + 300);
-
       // Email
       const emailInput = page.locator("input#email");
       await expect(emailInput).toBeVisible();
@@ -50,7 +48,7 @@ const PaymentPage: TPaymentPage = {
         .locator("div.ds-select-dropdown li button")
         .filter({ hasText: "Colombia" });
       await expect(countryOption).toBeVisible();
-      await countryOption.click({ delay: getRandomDelay() });
+      await countryOption.click({ delay: helper.getRandomDelay() });
 
       await helper.takeScreenshot("19-country-seleccionado");
 
