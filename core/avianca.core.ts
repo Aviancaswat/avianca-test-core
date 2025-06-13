@@ -13,6 +13,7 @@ const AviancaCore = {
             browser = await chromium.launch({
                 headless: g.headless,
                 args: [
+                    '--disable-http2',
                     '--disable-blink-features=AutomationControlled',
                     '--enable-webgl',
                     '--use-gl=swiftshader',
@@ -26,10 +27,10 @@ const AviancaCore = {
                 locale: 'en-US',
                 timezoneId: 'America/New_York',
                 deviceScaleFactor: 1,
-                recordVideo: {
-                    dir: 'test-results/videos/',
-                    size: { width: 1280, height: 720 }
-                },
+                // recordVideo: {
+                //     dir: 'test-results/videos/',
+                //     size: { width: 1280, height: 720 }
+                // },
             });
 
             page = await context?.newPage();
