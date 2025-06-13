@@ -182,8 +182,10 @@ const PassengerPage: TPassengerPage = {
     },
 
     async run(): Promise<void> {
+        console.log("Passenger page started...");
         await this.fillFormValues();
         await this.continueToServices();
+        console.log("Passenger page ended...");
     },
 
 }

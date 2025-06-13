@@ -104,12 +104,12 @@ const SeatPage: TSeatPage = {
             ir_a_pagar,
         } = SeatPage;
  
-        console.log("Run ejecutado");
+        console.log("Seats page started...");
         await seleccionar_asientos_ida();
         await confirmar_asientos_ida();
         await seleccionar_asientos_regreso();
         await ir_a_pagar();
-        console.log("Run FIN ejecutado");
+        console.log("Seats page ended...");
     }
 };
  

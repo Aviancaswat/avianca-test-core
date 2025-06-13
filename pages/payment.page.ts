@@ -66,7 +66,9 @@ const PaymentPage: TPaymentPage = {
   },
 
   async run(): Promise<void> {
+    console.log("Payment page started...");
     await this.fillBillingDetails();
+    console.log("Payment page ended...");
   },
 };
 

@@ -87,10 +87,12 @@ const ServicesPage: TServicesPage = {
     },
 
     async run(): Promise<void> {
+        console.log("Services page started...");
         await this.selectBusinessLounge();
         await this.selectSpecialAssistance();
         await this.selectTravelAssistance();
         await this.confirmServices();
+        console.log("Services page ended...");
     }
 };
 

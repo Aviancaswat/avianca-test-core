@@ -19,7 +19,7 @@ const BookingPage: TBookingPage = {
     initPage(pageP: TPage): void {
         page = pageP;
     },
-    
+
     async selectFlightOutbound(): Promise<void> {
 
         if (!page) {
@@ -105,12 +105,14 @@ const BookingPage: TBookingPage = {
     },
 
     async run(): Promise<void> {
+        console.log("Booking page start...");
         await this.selectFlightOutbound();
         await this.validateModalFlight();
         await this.selectFlightReturn();
         await this.validateModalFlight();
         await helper.takeScreenshot("resumen-seleccion-vuelos");
         await this.continueToPassenger();
+        console.log("Booking page end...");
     }
 }
 
