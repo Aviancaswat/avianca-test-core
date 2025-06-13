@@ -8,7 +8,7 @@ let page: Tpage;
 let screenshotCounter: number = 0;
 
 const PlaywrightHelper = {
-    
+
     init(pageP: Tpage) {
         page = pageP;
     },
@@ -37,7 +37,7 @@ const PlaywrightHelper = {
             const filename = `step${screenshotCounter++}-${label}-${timestamp}.png`;
             await page.screenshot({
                 path: `test-results/${filename}-${Date.now()}.png`,
-                fullPage: true
+                fullPage: false
             });
 
         } catch (error) {
