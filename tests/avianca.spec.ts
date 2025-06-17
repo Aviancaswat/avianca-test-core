@@ -5,7 +5,16 @@ import type { TBookingPage } from '../pages/booking.page';
 import type { TPassengerPage } from "../pages/passenger.page";
 import { TServicesPage } from '../pages/services.page';
 import { PlaywrightHelper as helper } from "../helpers/avianca.helper";
-import { HomePage, BookingPage, PassengerPage, ServicesPage, SeatPage, TSeatPage, PaymentPage, TPaymentPage } from "../pages/index";
+import {
+  HomePage,
+  BookingPage,
+  PassengerPage,
+  ServicesPage,
+  SeatPage,
+  PaymentPage,
+  type TSeatPage,
+  type TPaymentPage
+} from "../pages/index";
 
 test.describe("Test End to End Avianca", () => {
 
