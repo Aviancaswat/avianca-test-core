@@ -1,7 +1,7 @@
 import { expect, type Page } from "@playwright/test";
 import { GLOBAL_MESSAGES as m } from "../global.variables";
 import { PlaywrightHelper as helper } from "../helpers/avianca.helper";
-import { copys } from "../data/copys";
+import { newCopy as copys } from "../data/copys/home/home.copy";
 
 type TPage = Page | undefined | any;
 
@@ -57,7 +57,7 @@ const HomePage: THomePage = {
             await expect(page.locator('.content-wrap')).toBeVisible();
             await page.waitForSelector("#originBtn");
             await expect(page.locator('#originBtn')).toBeVisible();
-            const origen = page.getByPlaceholder((copys[lang]).origen);
+            const origen = page.getByPlaceholder((copys[lang])?.origen);
             await page.locator('button#originBtn').click({ delay: helper.getRandomDelay() });
             await origen.fill(copys['ciudad_origen'], { delay: helper.getRandomDelay() });
             await origen.press('Enter');
@@ -81,8 +81,8 @@ const HomePage: THomePage = {
         try {
             console.log("selectReturnOption ejecutado");
             const lang = helper.getLang();
-            await expect(page.getByPlaceholder(copys[lang].destino)).toBeVisible();
-            const destino = page.getByPlaceholder(copys[lang].destino);
+            await expect(page.getByPlaceholder(copys[lang]?.destino)).toBeVisible();
+            const destino = page.getByPlaceholder(copys[lang]?.destino);
             await destino.click({ delay: helper.getRandomDelay() });
             await destino.fill(copys['ciudad_destino'], { delay: helper.getRandomDelay() });
             await destino.press('Enter');
@@ -166,8 +166,8 @@ const HomePage: THomePage = {
 
             console.log("selectPassengers ejecutado");
             const lang = helper.getLang();
-            await expect(page.getByRole('button', { name: copys[lang].buscar, exact: true })).toBeVisible();
-            await page.getByRole('button', { name: copys[lang].buscar, exact: true }).click({ delay: helper.getRandomDelay() });
+            await expect(page.getByRole('button', { name: copys[lang]?.buscar, exact: true })).toBeVisible();
+            await page.getByRole('button', { name: copys[lang]?.buscar, exact: true }).click({ delay: helper.getRandomDelay() });
             await helper.takeScreenshot('busqueda-vuelos');
             await page.waitForSelector('#pageWrap');
         }
