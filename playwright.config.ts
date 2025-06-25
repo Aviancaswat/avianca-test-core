@@ -3,8 +3,8 @@ import { defineConfig } from '@playwright/test';
 export default defineConfig({
   testDir: './tests',
   timeout: 500000,
-  reporter: 'html',
   outputDir: 'test-results',
+  reporter: [['html', { outputFolder: 'playwright-report', open: 'never' }]],
   use: {
     headless: true,
     screenshot: 'on',
