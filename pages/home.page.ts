@@ -164,7 +164,7 @@ const HomePage: THomePage = {
 
         try {
 
-            console.log("selectPassengers ejecutado");
+            console.log("searchFlights ejecutado");
             const lang = helper.getLang();
             await expect(page.getByRole('button', { name: copys[lang]?.buscar, exact: true })).toBeVisible();
             await page.getByRole('button', { name: copys[lang]?.buscar, exact: true }).click({ delay: helper.getRandomDelay() });
@@ -189,7 +189,7 @@ const HomePage: THomePage = {
             searchFlights
         } = HomePage;
 
-        console.log("Run ejecutado");
+        console.log("Run Home ejecutado");
 
         await verifyCookies();
         await selectOriginOption();
@@ -199,7 +199,7 @@ const HomePage: THomePage = {
         await selectPassengers();
         await searchFlights();
 
-        console.log("Run FIN ejecutado");
+        console.log("Run END ejecutado");
     }
 };
 
