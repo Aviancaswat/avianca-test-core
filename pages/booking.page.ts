@@ -1,6 +1,7 @@
 import { expect, type Page } from "@playwright/test";
 import { GLOBAL_MESSAGES as m } from "../global.variables";
 import { PlaywrightHelper as helper } from "../helpers/avianca.helper";
+import { copyBooking } from "../data/copys/booking/booking.copy";
 
 type TPage = Page | undefined | any;
 
@@ -10,6 +11,7 @@ export type TBookingPage = {
     selectFlightReturn(): Promise<void>;
     validateModalFlight(): Promise<void>;
     continueToPassenger(): Promise<void>;
+    editFlightSelected(): Promise<void>;
     run(): Promise<void>;
 }
 
@@ -101,6 +103,21 @@ const BookingPage: TBookingPage = {
         catch (error) {
             console.error("BOOKINGPAGE => Ocurrió un error en click a continuar a flujo de pasajeros. Error: ", error);
             throw error;
+        }
+    },
+
+    async editFlightSelected(): Promise<void> {
+
+        try {
+            
+            if (copyBooking.editFlightSelected) {
+                const titleSummary = page.locator(".trip-summary-heading-created");
+                await expect(titleSummary).toBeVisible({ timeout: 40_000 });
+                await titleSummary.click({ delay: helper.getRandomDelay() });
+            }
+        }
+        catch (error) {
+            console.error("BOOKING PAGE => Ha ocurrido un error al editar la selección de vuelo");
         }
     },
 
