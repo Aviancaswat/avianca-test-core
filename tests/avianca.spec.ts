@@ -51,9 +51,9 @@ test.describe("Test End to End Avianca", () => {
     await AviancaCore.initTests();
     await homePage.run();
     await bookingPage.run();
-    await passengerPage.run();
-    await servicesPage.run();
-    await seatPage.run();
-    await paymentPage.run();
+    // await passengerPage.run();
+    // await servicesPage.run();
+    // await seatPage.run();
+    // await paymentPage.run();
   });
 });

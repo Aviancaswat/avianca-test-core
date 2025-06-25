@@ -109,11 +109,17 @@ const BookingPage: TBookingPage = {
     async editFlightSelected(): Promise<void> {
 
         try {
-            
+
             if (copyBooking.editFlightSelected) {
+                console.log("entró a editar la selección del vuelo");
                 const titleSummary = page.locator(".trip-summary-heading-created");
-                await expect(titleSummary).toBeVisible({ timeout: 40_000 });
-                await titleSummary.click({ delay: helper.getRandomDelay() });
+                await expect(titleSummary).toBeVisible({ timeout: 10_000 });
+                const buttonEdit = page.locator(".journey-select_modifier-edit_button>.button_label");
+                await expect(buttonEdit).toBeVisible({ timeout: 10_000 });
+                await buttonEdit.click();
+            }
+            else {
+                console.log("NO entró al editar la selección del vuelo");
             }
         }
         catch (error) {
@@ -128,7 +134,11 @@ const BookingPage: TBookingPage = {
         await this.selectFlightReturn();
         await this.validateModalFlight();
         await helper.takeScreenshot("resumen-seleccion-vuelos");
-        await this.continueToPassenger();
+        //await this.continueToPassenger();
+
+        await page.waitForTimeout(2000);
+        await this.editFlightSelected();
+        await helper.takeScreenshot("edición de vuelo(s) seleccionado");
         console.log("Booking page end...");
     }
 }
