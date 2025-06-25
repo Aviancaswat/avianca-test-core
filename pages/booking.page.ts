@@ -1,6 +1,7 @@
 import { expect, type Page } from "@playwright/test";
 import { GLOBAL_MESSAGES as m } from "../global.variables";
 import { PlaywrightHelper as helper } from "../helpers/avianca.helper";
+import { bookingCopy as copys } from "../data/copys/booking/booking.copy";
 
 type TPage = Page | undefined | any;
 
@@ -29,11 +30,14 @@ const BookingPage: TBookingPage = {
         try {
             await page.waitForSelector('#pageWrap');
             await page.waitForSelector('.journey_price_fare-select_label-text');
+            await helper.takeScreenshot('flight-seleccion-vuelo-ida-1');
             await expect(page.locator(".journey_price_fare-select_label-text").first()).toBeVisible();
+            await helper.takeScreenshot('flight-seleccion-vuelo-ida-2');
             await page.locator('.journey_price_fare-select_label-text').first().click({ delay: helper.getRandomDelay() });
+            await helper.takeScreenshot('flight-seleccion-vuelo-ida-3');
             await page.waitForSelector(".journey_fares");
+            await helper.takeScreenshot('flight-seleccion-vuelo-ida-4');
             await page.locator('.journey_fares').first().locator('.light-basic.cro-new-basic-button').click({ delay: helper.getRandomDelay() });
-            await helper.takeScreenshot('flight-seleccion-vuelo-ida');
         }
         catch (error) {
             console.error("BOOKINGPAGE => Ha ocurrido un error en la selección de vuelo de ida | Error: ", error);
@@ -47,20 +51,26 @@ const BookingPage: TBookingPage = {
         }
 
         try {
-
+            await helper.takeScreenshot('13-seleccion-vuelo-regreso');
             await page.waitForSelector("#journeysContainerId_1", { timeout: 15000 });
+            await helper.takeScreenshot('13-seleccion-vuelo-regreso');
             const containerReturn = page.locator("#journeysContainerId_1");
             await expect(containerReturn).toBeVisible();
+            await helper.takeScreenshot('13-seleccion-vuelo-regreso');
             await containerReturn.locator(".journey_price_fare-select_label-text").first().click({ delay: helper.getRandomDelay() });
             await helper.takeScreenshot('13-seleccion-vuelo-regreso');
             await containerReturn.locator('.journey_fares').first().locator('.light-basic.cro-new-basic-button').click({ delay: helper.getRandomDelay() });
+            await helper.takeScreenshot('13-seleccion-vuelo-regreso');
             await page.waitForTimeout(1500);
+            await helper.takeScreenshot('13-seleccion-vuelo-regreso');
         }
         catch (error) {
             console.error("BOOKINGPAGE => Ha ocurrido un error en la selección de vuelo de regreso | Error: ", error);
             throw error;
         }
     },
+
+
 
     async validateModalFlight(): Promise<void> {
 
@@ -73,8 +83,18 @@ const BookingPage: TBookingPage = {
             await page.waitForTimeout(1500);
             const isVisibleModal = await page.locator("#FB310").first().isVisible();
             if (isVisibleModal) {
-                await expect(page.locator(".cro-button.cro-no-accept-upsell-button")).toBeVisible();
-                await page.locator(".cro-button.cro-no-accept-upsell-button").first().click({ delay: helper.getRandomDelay() });
+                await helper.takeScreenshot("modal-seleccion-vuelo");
+                if (!copys.is_upgrade_choice) {
+                    await expect(page.locator('.cro-button.cro-no-accept-upsell-button')).toBeVisible();
+                    await helper.takeScreenshot("modal-seleccion-no-aceptar-upgrade");
+                    await page.locator('.cro-button.cro-no-accept-upsell-button').click({ delay: helper.getRandomDelay() });
+                } else {
+                    await expect(page.locator('.cro-button.cro-accept-upsell-button')).toBeVisible();
+                    await helper.takeScreenshot("modal-seleccion-aceptar-upgrade");
+                    await page.locator('.cro-button.cro-accept-upsell-button').click({ delay: helper.getRandomDelay() });
+                }
+                await helper.takeScreenshot("modal-seleccion-vuelo-1");
+                await page.locator(copys.modal_flight_choice).click({ delay: helper.getRandomDelay() });
             }
         }
         catch (error) {
