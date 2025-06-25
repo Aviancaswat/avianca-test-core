@@ -26,11 +26,13 @@ test.describe("Test End to End Avianca", () => {
   let seatPage: TSeatPage = SeatPage;
   let paymentPage: TPaymentPage = PaymentPage;
 
-  test.beforeEach(async () => {
+  test.beforeEach(async ({page}, testInfo) => {
+    
     await AviancaCore.initializeBrowser();
     page = AviancaCore.getPage();
+
     if (page) {
-      helper.init(page);
+      helper.init(page, testInfo);
       homePage.initPage(page);
       bookingPage.initPage(page);
       passengerPage.initPage(page);

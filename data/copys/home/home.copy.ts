@@ -1,14 +1,13 @@
 import type { copysType } from "../../../types/copy.type";
 import { copys } from "../../copys";
 
-//nuevas propiedades para HU
 interface example extends Partial<copysType> {
-    //nuevas propiedades de mi HU
+    isActiveOptionOutbound: boolean
 }
 
-const newCopy: example = {
+const HomeCopy: example = {
     ...copys,
-    ciudad_origen: 'MDE'
+    isActiveOptionOutbound: false, //está activo el vuelo de ida
 }
 
-export { newCopy };
+export { HomeCopy };

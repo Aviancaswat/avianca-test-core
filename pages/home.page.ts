@@ -1,11 +1,12 @@
 import { expect, type Page } from "@playwright/test";
 import { GLOBAL_MESSAGES as m } from "../global.variables";
 import { PlaywrightHelper as helper } from "../helpers/avianca.helper";
-import { newCopy as copys } from "../data/copys/home/home.copy";
+import { HomeCopy as copys } from "../data/copys/home/home.copy";
 
 type TPage = Page | undefined | any;
 
 export type THomePage = {
+    selectJourneyType(): Promise<void>;
     verifyCookies(): Promise<void>;
     selectOriginOption(): Promise<void>;
     selectReturnOption(): Promise<void>;
@@ -23,6 +24,25 @@ const HomePage: THomePage = {
 
     initPage(pageP: TPage): void {
         page = pageP;
+    },
+
+    async selectJourneyType(): Promise<void> {
+
+        if (!page) {
+            throw new Error(m.errors.initializated);
+        }
+
+        try {
+            
+            if (copys.isActiveOptionOutbound) {
+                const checkInput = page.locator("#journeytypeId_0");
+                await expect(checkInput).toBeVisible({ timeout: 40_000 });
+                await checkInput.click({ delay: helper.getRandomDelay() });
+            }
+        }
+        catch (error) {
+            console.error("HOME PAGE => Ocurrió un error al seleccionar la opción para el tipo de vuelo");
+        }
     },
 
     async verifyCookies(): Promise<void> {

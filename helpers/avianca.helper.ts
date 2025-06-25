@@ -1,4 +1,4 @@
-import type { Page } from "@playwright/test";
+import type { Page, TestInfo } from "@playwright/test";
 import type { Lang } from "../types/copy.type";
 import { copys } from "../data/copys";
 
@@ -6,11 +6,13 @@ type Tpage = Page | undefined | any;
 
 let page: Tpage;
 let screenshotCounter: number = 0;
+let testInfo: TestInfo;
 
 const PlaywrightHelper = {
 
-    init(pageP: Tpage) {
+    init(pageP: Tpage, testInfoP) {
         page = pageP;
+        testInfo = testInfoP;
     },
 
     getTimestamp(): string {
@@ -26,6 +28,7 @@ const PlaywrightHelper = {
     },
 
     async takeScreenshot(label: string): Promise<void> {
+
         if (!page) {
             throw new Error("El navegador no ha sido inicializado. Llama al método 'initializeBrowser'");
         }
@@ -34,9 +37,9 @@ const PlaywrightHelper = {
 
             const timestamp = this.getTimestamp();
             const filename = `step${screenshotCounter++}-${label}-${timestamp}.png`;
-            await page.screenshot({
-                path: `test-results/${filename}-${Date.now()}.png`,
-                fullPage: false
+            testInfo.attach(filename, {
+                body: await page.screenshot(),
+                contentType: "image/png"
             });
 
         } catch (error) {
