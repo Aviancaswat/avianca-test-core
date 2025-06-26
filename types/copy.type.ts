@@ -7,7 +7,7 @@ type copysType = {
     fecha_llegada: string,
     ciudad_origen: string,
     ciudad_destino: string,
-    modal_flight_choice:string,
+    modal_flight_choice: boolean,
     es: {
         origen: string,
         destino: string,

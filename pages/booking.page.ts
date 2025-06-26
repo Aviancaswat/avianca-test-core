@@ -2,6 +2,7 @@ import { expect, type Page } from "@playwright/test";
 import { GLOBAL_MESSAGES as m } from "../global.variables";
 import { PlaywrightHelper as helper } from "../helpers/avianca.helper";
 import { bookingCopy as copys } from "../data/copys/booking/booking.copy";
+import { HomePage } from "./home.page";
 
 type TPage = Page | undefined | any;
 
@@ -22,10 +23,7 @@ const BookingPage: TBookingPage = {
     },
 
     async selectFlightOutbound(): Promise<void> {
-
-        if (!page) {
-            throw new Error(m.errors.initializated);
-        }
+        if (!page) throw new Error(m.errors.initializated);
 
         try {
             await page.waitForSelector('#pageWrap');
@@ -38,17 +36,14 @@ const BookingPage: TBookingPage = {
             await page.waitForSelector(".journey_fares");
             await helper.takeScreenshot('flight-seleccion-vuelo-ida-4');
             await page.locator('.journey_fares').first().locator('.light-basic.cro-new-basic-button').click({ delay: helper.getRandomDelay() });
-        }
-        catch (error) {
+        } catch (error) {
             console.error("BOOKINGPAGE => Ha ocurrido un error en la selección de vuelo de ida | Error: ", error);
             throw error;
         }
     },
-    async selectFlightReturn(): Promise<void> {
 
-        if (!page) {
-            throw new Error(m.errors.initializated);
-        }
+    async selectFlightReturn(): Promise<void> {
+        if (!page) throw new Error(m.errors.initializated);
 
         try {
             await helper.takeScreenshot('13-seleccion-vuelo-regreso');
@@ -63,27 +58,21 @@ const BookingPage: TBookingPage = {
             await helper.takeScreenshot('13-seleccion-vuelo-regreso');
             await page.waitForTimeout(1500);
             await helper.takeScreenshot('13-seleccion-vuelo-regreso');
-        }
-        catch (error) {
+        } catch (error) {
             console.error("BOOKINGPAGE => Ha ocurrido un error en la selección de vuelo de regreso | Error: ", error);
             throw error;
         }
     },
 
-
-
     async validateModalFlight(): Promise<void> {
-
-        if (!page) {
-            throw new Error(m.errors.initializated);
-        }
+        if (!page) throw new Error(m.errors.initializated);
 
         try {
-
             await page.waitForTimeout(1500);
             const isVisibleModal = await page.locator("#FB310").first().isVisible();
             if (isVisibleModal) {
                 await helper.takeScreenshot("modal-seleccion-vuelo");
+
                 if (!copys.is_upgrade_choice) {
                     await expect(page.locator('.cro-button.cro-no-accept-upsell-button')).toBeVisible();
                     await helper.takeScreenshot("modal-seleccion-no-aceptar-upgrade");
@@ -93,32 +82,24 @@ const BookingPage: TBookingPage = {
                     await helper.takeScreenshot("modal-seleccion-aceptar-upgrade");
                     await page.locator('.cro-button.cro-accept-upsell-button').click({ delay: helper.getRandomDelay() });
                 }
-                await helper.takeScreenshot("modal-seleccion-vuelo-1");
-                await page.locator(copys.modal_flight_choice).click({ delay: helper.getRandomDelay() });
             }
-        }
-        catch (error) {
-            console.error("BOOKINGPAGE => Ocurrió un error al validar el modal intermedio (seleccion de vuelos)");
+        } catch (error) {
+            console.error("BOOKINGPAGE => Ocurrió un error al validar el modal intermedio (selección de vuelos)");
             throw error;
         }
     },
 
     async continueToPassenger(): Promise<void> {
-
-        if (!page) {
-            throw new Error(m.errors.initializated);
-        }
+        if (!page) throw new Error(m.errors.initializated);
 
         try {
-
             await page.waitForSelector(".trip-summary");
             const buttonConfirmResumen = page.locator(".button.page_button.btn-action");
             await expect(buttonConfirmResumen).toBeVisible();
             buttonConfirmResumen.scrollIntoViewIfNeeded();
             await buttonConfirmResumen.click({ delay: helper.getRandomDelay() });
             await page.waitForSelector(".passenger_data_group");
-        }
-        catch (error) {
+        } catch (error) {
             console.error("BOOKINGPAGE => Ocurrió un error en click a continuar a flujo de pasajeros. Error: ", error);
             throw error;
         }
@@ -126,14 +107,53 @@ const BookingPage: TBookingPage = {
 
     async run(): Promise<void> {
         console.log("Booking page start...");
-        await this.selectFlightOutbound();
-        await this.validateModalFlight();
+
+        if (copys.is_update_flight) {
+            try {
+                await page.waitForSelector(".combined_summary_bar_button", { timeout: 10000 });
+                const editButton = page.locator(".combined_summary_bar_button");
+                const isEditVisible = await editButton.isVisible();
+
+                if (isEditVisible) {
+                    await helper.takeScreenshot("editar-vuelo-actual");
+                    await editButton.click({ delay: helper.getRandomDelay() });
+                    await page.waitForTimeout(1500);
+
+                    HomePage.initPage(page);
+
+                    const origen = copys.ciudad_origen || 'CLO';
+                    const destino = copys.ciudad_destino || 'BOG';
+
+                    await HomePage.selectOriginOption(origen);
+                    await HomePage.selectReturnOption(destino);
+                    await HomePage.selectDepartureDate();
+                    await HomePage.selectReturnDate();
+                    await HomePage.searchFlights();
+
+                    await page.waitForSelector('#pageWrap', { timeout: 15000 });
+                    await this.selectFlightOutbound();
+                    await this.validateModalFlight();
+                } else {
+                    console.warn("BOOKINGPAGE => Botón 'Editar' no visible, continuando con el flujo normal.");
+                    await this.selectFlightOutbound();
+                    await this.validateModalFlight();
+                }
+            } catch (error) {
+                console.error("BOOKINGPAGE => Error al intentar hacer clic en 'Editar' y ejecutar flujo Home. Error:", error);
+                throw error;
+            }
+        } else {
+            await this.selectFlightOutbound();
+            await this.validateModalFlight();
+        }
+
         await this.selectFlightReturn();
         await this.validateModalFlight();
         await helper.takeScreenshot("resumen-seleccion-vuelos");
         await this.continueToPassenger();
+
         console.log("Booking page end...");
     }
-}
+};
 
 export { BookingPage };

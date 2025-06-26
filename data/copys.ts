@@ -7,6 +7,7 @@ const copys: copysType = {
     fecha_llegada: 'jul 17',
     ciudad_origen: 'CLO',
     ciudad_destino: 'BOG',
+    modal_flight_choice: false,
     es: {
         origen: 'Origen',
         destino: 'Hacia',
