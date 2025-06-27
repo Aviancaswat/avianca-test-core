@@ -22,6 +22,39 @@ const BookingPage: TBookingPage = {
         page = pageP;
     },
 
+    async selectFlightReturn(): Promise<void> {
+ 
+        if (!page) {
+            throw new Error(m.errors.initializated);
+        }
+ 
+        try {
+ 
+            await page.waitForSelector("#journeysContainerId_1", { timeout: 15000 });
+            const containerReturn = page.locator("#journeysContainerId_1");
+            await expect(containerReturn).toBeVisible();
+            await page.waitForTimeout(3000);
+            let indiceVueloRegreso = parseInt(copyBooking.numero_vuelo_regreso);
+            const posicionVueloRegreso = await page.evaluate((indiceRegreso) => {
+                let reference = 'c12-';
+                let clase=document.querySelector('#journeysContainerId_1')?.querySelector('.journey')?.className as string;
+                let posicionInicial = clase?.lastIndexOf(reference)+reference.length as number;
+                let posicionInicialVuelo = clase?.substring(posicionInicial,posicionInicial+3).trim()
+                let indice = parseInt(posicionInicialVuelo) + indiceRegreso - 1;
+                return indice;
+            },indiceVueloRegreso);
+            await containerReturn.locator('.journey_price_button.ng-tns-c12-'+posicionVueloRegreso).first().click({ delay: helper.getRandomDelay() });
+            await helper.takeScreenshot('13-seleccion-vuelo-regreso');
+            await page.waitForSelector(".page-journey-selection");
+            await page.locator('.page-journey-selection').first().locator('.light-basic.cro-new-basic-button').click({ delay: helper.getRandomDelay() });
+            await page.waitForTimeout(1500);
+        }
+        catch (error) {
+            console.error("BOOKINGPAGE => Ha ocurrido un error en la selección de vuelo de regreso | Error: ", error);
+            throw error;
+        }
+    },
+
     async selectFlightOutbound(): Promise<void> {
 
         if (!page) {
@@ -29,37 +62,18 @@ const BookingPage: TBookingPage = {
         }
 
         try {
+
             await page.waitForSelector('#pageWrap');
-            await page.waitForSelector('.journey_price_fare-select_label-text');
-            await expect(page.locator(".journey_price_fare-select_label-text").first()).toBeVisible();
-            await page.locator('.journey_price_fare-select_label-text').first().click({ delay: helper.getRandomDelay() });
-            await page.waitForSelector(".journey_fares");
-            await page.locator('.journey_fares').first().locator('.light-basic.cro-new-basic-button').click({ delay: helper.getRandomDelay() });
+            let posicion = parseInt(copyBooking.numero_vuelo_ida) + 1;
+            await page.waitForSelector('.journey_price_button.ng-tns-c12-' + posicion);
+            await expect(page.locator('.journey_price_button.ng-tns-c12-' + posicion).first()).toBeVisible();
+            await page.locator('.journey_price_button.ng-tns-c12-' + posicion).first().click({ delay: helper.getRandomDelay() });
+            await page.waitForSelector(".page-journey-selection");
+            await page.locator('.page-journey-selection').first().locator('.light-basic.cro-new-basic-button').click({ delay: helper.getRandomDelay() });
             await helper.takeScreenshot('flight-seleccion-vuelo-ida');
         }
         catch (error) {
             console.error("BOOKINGPAGE => Ha ocurrido un error en la selección de vuelo de ida | Error: ", error);
-            throw error;
-        }
-    },
-    async selectFlightReturn(): Promise<void> {
-
-        if (!page) {
-            throw new Error(m.errors.initializated);
-        }
-
-        try {
-
-            await page.waitForSelector("#journeysContainerId_1", { timeout: 15000 });
-            const containerReturn = page.locator("#journeysContainerId_1");
-            await expect(containerReturn).toBeVisible();
-            await containerReturn.locator(".journey_price_fare-select_label-text").first().click({ delay: helper.getRandomDelay() });
-            await helper.takeScreenshot('13-seleccion-vuelo-regreso');
-            await containerReturn.locator('.journey_fares').first().locator('.light-basic.cro-new-basic-button').click({ delay: helper.getRandomDelay() });
-            await page.waitForTimeout(1500);
-        }
-        catch (error) {
-            console.error("BOOKINGPAGE => Ha ocurrido un error en la selección de vuelo de regreso | Error: ", error);
             throw error;
         }
     },
@@ -85,27 +99,6 @@ const BookingPage: TBookingPage = {
         }
     },
 
-    async continueToPassenger(): Promise<void> {
-
-        if (!page) {
-            throw new Error(m.errors.initializated);
-        }
-
-        try {
-
-            await page.waitForSelector(".trip-summary");
-            const buttonConfirmResumen = page.locator(".button.page_button.btn-action");
-            await expect(buttonConfirmResumen).toBeVisible();
-            buttonConfirmResumen.scrollIntoViewIfNeeded();
-            await buttonConfirmResumen.click({ delay: helper.getRandomDelay() });
-            await page.waitForSelector(".passenger_data_group");
-        }
-        catch (error) {
-            console.error("BOOKINGPAGE => Ocurrió un error en click a continuar a flujo de pasajeros. Error: ", error);
-            throw error;
-        }
-    },
-
     async editFlightSelected(): Promise<void> {
 
         try {
@@ -127,6 +120,36 @@ const BookingPage: TBookingPage = {
         }
     },
 
+    async continueToPassenger(): Promise<void> {
+ 
+        if (!page) {
+            throw new Error(m.errors.initializated);
+        }
+ 
+        try {
+            const lang = helper.getLang();
+            await page.waitForSelector(".trip-summary");
+            if(copyBooking.consulta_condiciones_tarifa){
+                const newTabPromise = page.waitForEvent("popup");
+                await page.getByRole('link', { name: copyBooking[lang].informacion_tarifas }).click({ delay: helper.getRandomDelay() });
+                await page.waitForTimeout(3500);
+                const newTab = await newTabPromise;
+                await newTab.waitForLoadState();
+                await expect(newTab).toHaveURL("https://www.avianca.com/es/informacion-y-ayuda/tarifas-avianca/");
+                newTab.close();
+            }
+            const buttonConfirmResumen = page.locator(".button.page_button.btn-action");
+            await expect(buttonConfirmResumen).toBeVisible();
+            buttonConfirmResumen.scrollIntoViewIfNeeded();
+            await buttonConfirmResumen.click({ delay: helper.getRandomDelay() });
+            await page.waitForSelector(".passenger_data_group");
+        }
+        catch (error) {
+            console.error("FLIGHTS => Ocurrió un error en click a continuar a flujo de pasajeros. Error: ", error);
+            throw error;
+        }
+    },
+
     async run(): Promise<void> {
         console.log("Booking page start...");
         await this.selectFlightOutbound();
@@ -134,11 +157,7 @@ const BookingPage: TBookingPage = {
         await this.selectFlightReturn();
         await this.validateModalFlight();
         await helper.takeScreenshot("resumen-seleccion-vuelos");
-        //await this.continueToPassenger();
-
-        await page.waitForTimeout(2000);
-        await this.editFlightSelected();
-        await helper.takeScreenshot("edición de vuelo(s) seleccionado");
+        await this.continueToPassenger();
         console.log("Booking page end...");
     }
 }

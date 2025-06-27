@@ -1,6 +1,6 @@
 import type { Page, TestInfo } from "@playwright/test";
 import type { Lang } from "../types/copy.type";
-import { copys } from "../data/copys";
+import { copys } from "../data/home.deautl.copy";
 
 type Tpage = Page | undefined | any;
 

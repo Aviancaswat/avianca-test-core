@@ -1,7 +1,7 @@
 import { expect, type Page } from "@playwright/test";
 import { GLOBAL_MESSAGES as m } from "../global.variables";
 import { PlaywrightHelper as helper } from "../helpers/avianca.helper";
-import { copys } from "../data/copys";
+import { copys } from "../data/home.deautl.copy";
  
 type TPage = Page | undefined | any;
  
