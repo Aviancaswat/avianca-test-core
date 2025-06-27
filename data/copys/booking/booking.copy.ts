@@ -16,6 +16,9 @@ interface BookingCopy {
     fr: {
         informacion_tarifas: string,
     },
+    departure_flight_fare: "light" | "basic" | "classic" | "flex" | "insignia" | "business",
+    return_flight_fare: "light" | "basic" | "classic" | "flex" | "insignia" | "business",
+    withdrawal_and_desistance:boolean
 }
 
 export const copyBooking: BookingCopy = {
@@ -34,5 +37,8 @@ export const copyBooking: BookingCopy = {
     },
     fr: {
         informacion_tarifas: 'conditions de votre tarif',
-    }
+    },
+    departure_flight_fare: "classic",
+    return_flight_fare: "flex",
+    withdrawal_and_desistance:true
 }

@@ -62,15 +62,31 @@ const BookingPage: TBookingPage = {
         }
 
         try {
+            const fareMap: Record<string, number> = {
+                basic: 0,
+                light: 0,
+                classic: 1,
+                flex: 2,
+                business: 3,
+                insignia: 3,
+            };
 
             await page.waitForSelector('#pageWrap');
             let posicion = parseInt(copyBooking.numero_vuelo_ida) + 1;
             await page.waitForSelector('.journey_price_button.ng-tns-c12-' + posicion);
             await expect(page.locator('.journey_price_button.ng-tns-c12-' + posicion).first()).toBeVisible();
             await page.locator('.journey_price_button.ng-tns-c12-' + posicion).first().click({ delay: helper.getRandomDelay() });
-            await page.waitForSelector(".page-journey-selection");
-            await page.locator('.page-journey-selection').first().locator('.light-basic.cro-new-basic-button').click({ delay: helper.getRandomDelay() });
-            await helper.takeScreenshot('flight-seleccion-vuelo-ida');
+            await page.waitForSelector(".journey_fares_list_item");
+            const flightFare = fareMap[copyBooking.departure_flight_fare] ?? 0;
+
+            if (copyBooking.departure_flight_fare === "flex") {
+                await page.locator('.journey_fares_list_item').nth(flightFare).locator(`.fare-control`).last().click({ delay: helper.getRandomDelay() });
+            } else if (copyBooking.departure_flight_fare === "light" || copyBooking.departure_flight_fare === "basic" || copyBooking.departure_flight_fare === "classic") {
+                await page.locator('.journey_fares_list_item').nth(flightFare).locator(`.fare-${copyBooking.departure_flight_fare}.cro-new-${copyBooking.departure_flight_fare}-button`).click({ delay: helper.getRandomDelay() });
+            } else {
+                await expect(page.locator('.journey_fares_list_item').nth(flightFare).locator('.fare-control.only-business')).toBeVisible();
+                await page.locator('.journey_fares_list_item').nth(flightFare).locator('.fare-control.only-business').click({ delay: helper.getRandomDelay() });
+            }
         }
         catch (error) {
             console.error("BOOKINGPAGE => Ha ocurrido un error en la selección de vuelo de ida | Error: ", error);
