@@ -24,7 +24,7 @@ const PlaywrightHelper = {
         const hh = pad(now.getHours());
         const mi = pad(now.getMinutes());
         const ss = pad(now.getSeconds());
-        return `fecha-${dd}-${mm}-${yyyy}_hora-${hh}-${mi}-${ss}`;
+        return `${dd}_${mm}_${yyyy}-${hh}_${mi}_${ss}`;
     },
 
     async takeScreenshot(label: string): Promise<void> {

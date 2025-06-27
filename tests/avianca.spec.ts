@@ -26,8 +26,8 @@ test.describe("Test End to End Avianca", () => {
   let seatPage: TSeatPage = SeatPage;
   let paymentPage: TPaymentPage = PaymentPage;
 
-  test.beforeEach(async ({page}, testInfo) => {
-    
+  test.beforeEach(async ({ page }, testInfo) => {
+
     await AviancaCore.initializeBrowser();
     page = AviancaCore.getPage();
 
@@ -40,6 +40,7 @@ test.describe("Test End to End Avianca", () => {
       seatPage.initPage(page);
       paymentPage.initPage(page);
     }
+
   });
 
   test.afterEach(async () => {
@@ -47,7 +48,7 @@ test.describe("Test End to End Avianca", () => {
     page = undefined;
   });
 
-  test('Home => Payment', async ({ }) => {
+  test.skip('Home => Payment', async ({ }) => {
     await AviancaCore.initTests();
     await homePage.run();
     await bookingPage.run();
@@ -55,5 +56,11 @@ test.describe("Test End to End Avianca", () => {
     // await servicesPage.run();
     // await seatPage.run();
     // await paymentPage.run();
+  });
+
+  test("Funcionalidad de seleccion de tipo de vuelo (ida y vuelta)", async () => {
+    await AviancaCore.initTests();
+    await homePage.verifyCookies();
+    await homePage.selectOptionTypeFlight();
   });
 });

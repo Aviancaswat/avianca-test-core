@@ -7,7 +7,7 @@ interface example extends Partial<copysType> {
 
 const HomeCopy: example = {
     ...copys,
-    isActiveOptionOutbound: false, //está activo el vuelo de ida
+    isActiveOptionOutbound: true, //está activo el vuelo de ida
 }
 
 export { HomeCopy };
