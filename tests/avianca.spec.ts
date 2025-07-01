@@ -40,7 +40,6 @@ test.describe("Test End to End Avianca", () => {
       seatPage.initPage(page);
       paymentPage.initPage(page);
     }
-
   });
 
   test.afterEach(async () => {
@@ -48,7 +47,7 @@ test.describe("Test End to End Avianca", () => {
     page = undefined;
   });
 
-  test.skip('Home => Payment', async ({ }) => {
+  test.skip('Home => Payment', async ({ }) => { //esta test esta configurada para saltarla en github actions (test.skip)
     await AviancaCore.initTests();
     await homePage.run();
     await bookingPage.run();
