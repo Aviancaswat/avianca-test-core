@@ -1,9 +1,9 @@
 name: Playwright Tests
 on:
   push:
-    branches: [ '__disabled__' ]
+    branches: [ 'feature/home/seleccion-tipo-vuelo' ]
   pull_request:
-    branches: [ '__disabled__' ]
+    branches: [ 'feature/home/seleccion-tipo-vuelo' ]
 jobs:
   test:
     timeout-minutes: 60
