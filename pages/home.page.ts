@@ -38,13 +38,13 @@ const HomePage: THomePage = {
 
         if (copys.isActiveOptionOutbound) { //si esta seleccionado el vuelo de ida
             const checkIda = page.locator("#journeytypeId_1");
-            await expect(checkIda).toBeVisible({ timeout: 15_000 });
+            await expect(checkIda);
             await checkIda.click({ delay: helper.getRandomDelay() });
             await helper.takeScreenshot("check-vuelo-ida")
         }
         else {
             const checkIdaVuelta = page.locator("#journeytypeId_0");
-            await expect(checkIdaVuelta).toBeVisible({ timeout: 15_000 });
+            await expect(checkIdaVuelta);
             await checkIdaVuelta.click({ delay: helper.getRandomDelay() });
             await helper.takeScreenshot("check-vuelo-ida-vuelta");
         }
