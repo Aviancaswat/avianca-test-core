@@ -36,15 +36,15 @@ const HomePage: THomePage = {
      */
     async selectOptionTypeFlight(): Promise<void> {
 
+        await page.waitForSelector("#journeytypeId_0");
+
         if (copys.isActiveOptionOutbound) { //si esta seleccionado el vuelo de ida
             const checkIda = page.locator("#journeytypeId_1");
-            await expect(checkIda);
             await checkIda.click({ delay: helper.getRandomDelay() });
             await helper.takeScreenshot("check-vuelo-ida")
         }
         else {
             const checkIdaVuelta = page.locator("#journeytypeId_0");
-            await expect(checkIdaVuelta);
             await checkIdaVuelta.click({ delay: helper.getRandomDelay() });
             await helper.takeScreenshot("check-vuelo-ida-vuelta");
         }
