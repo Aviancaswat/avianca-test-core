@@ -21,19 +21,10 @@ export type THomePage = {
 let page: TPage;
 
 const HomePage: THomePage = {
-    /**
-     * Función que sirve para inicializar el objeto page de playwright
-     * @param { TPage } pageP - Objeto genérico de playwright
-     * @returns { void } No retorna ningún valor
-     */
     initPage(pageP: TPage): void {
         page = pageP;
     },
 
-    /** 
-     * Función que sirve para seleccionar el tipo de vuelo (vuelta y Ida y solo ida) 
-     * @returns { Promise<void> } - Una promesa que se resuelve sin valor
-     */
     async selectOptionTypeFlight(): Promise<void> {
 
         await page.waitForSelector("#journeytypeId_0");
@@ -50,10 +41,6 @@ const HomePage: THomePage = {
         }
     },
 
-    /**
-     * Función que sirve para aceptar el modal o popup de cookies
-     * @returns { Promise<void> } Una promesa que se resuelve sin valor
-    */
     async verifyCookies(): Promise<void> {
         if (!page) {
             throw new Error(m.errors.initializated);
@@ -74,10 +61,6 @@ const HomePage: THomePage = {
         }
     },
 
-    /**
-     * Función que sirve para seleccionar la ciudad de origen.
-     * @returns { Promise<void> } Una promesa que se resuelve sin valor
-    */
     async selectOriginOption(): Promise<void> {
 
         if (!page) {
@@ -87,7 +70,6 @@ const HomePage: THomePage = {
         try {
 
             const lang = helper.getLang();
-            console.log("selectOriginOption ejecutado");
             const wrapperOrigin = page.locator('#originBtn');
             await expect(wrapperOrigin).toBeVisible({ timeout: 20_000 });
             await wrapperOrigin.click();
@@ -105,10 +87,6 @@ const HomePage: THomePage = {
         }
     },
 
-    /**
-     * Función que sirve para seleccionar la ciudad de destino
-     * @returns { Promise<void> } Una promesa que se resuelve sin valor
-     */
     async selectReturnOption(): Promise<void> {
 
         if (!page) {
@@ -116,7 +94,7 @@ const HomePage: THomePage = {
         }
 
         try {
-            console.log("selectReturnOption ejecutado");
+
             const lang = helper.getLang();
             await expect(page.getByPlaceholder(copys[lang]?.destino)).toBeVisible();
             const destino = page.getByPlaceholder(copys[lang]?.destino);
@@ -132,10 +110,6 @@ const HomePage: THomePage = {
         }
     },
 
-    /**
-     * Función que sirve para seleccionar la fecha del inicio del vuelo
-     * @returns { Promise<void> } Una promesa que se resuelve sin valor
-     */
     async selectDepartureDate(): Promise<void> {
 
         if (!page) {
@@ -143,7 +117,7 @@ const HomePage: THomePage = {
         }
 
         try {
-            console.log("selectDepartureDate ejecutado");
+
             await page.waitForSelector("#departureInputDatePickerId");
             const fechaIda = await page.locator('id=departureInputDatePickerId');
             fechaIda.click({ delay: helper.getRandomDelay() });
@@ -156,10 +130,6 @@ const HomePage: THomePage = {
         }
     },
 
-    /**
-     * Función que sirve para seleccionar la fecha de regreso del vuelo
-     * @returns { Promise<void> } Una promesa que se resuelve sin valor
-     */
     async selectReturnDate(): Promise<void> {
 
         if (!page) {
@@ -168,7 +138,6 @@ const HomePage: THomePage = {
 
         try {
 
-            console.log("selectReturnDate ejecutado");
             await page.waitForTimeout(3000);
             await page.locator('span').filter({ hasText: copys['fecha_llegada'] }).click({ delay: helper.getRandomDelay() });
             await helper.takeScreenshot('seleccion-fecha-vuelta');
@@ -179,11 +148,6 @@ const HomePage: THomePage = {
         }
     },
 
-    /**
-     * Función que sirve para seleccionar los tipos de pasajeros (adultor, niños e infantes) 
-     * que van en el vuelo
-     * @returns { Promise<void> } Una promesa resuelta si valor
-     */
     async selectPassengers(): Promise<void> {
 
         if (!page) {
@@ -192,7 +156,6 @@ const HomePage: THomePage = {
 
         try {
 
-            console.log("selectPassengers ejecutado");
             await page.getByRole('button', { name: '' }).nth(1).click();
             await page.getByRole('button', { name: '' }).nth(2).click();
             await page.getByRole('button', { name: '' }).nth(3).click();
@@ -206,10 +169,6 @@ const HomePage: THomePage = {
         }
     },
 
-    /**
-     * Función que ejecuta la busqueda de los vuelos conforme a los parámetros de ciudades y fechas
-     * @returns { Promise<void> } Una promesa resuelta sin valor
-     */
     async searchFlights(): Promise<void> {
 
         if (!page) {
@@ -218,7 +177,6 @@ const HomePage: THomePage = {
 
         try {
 
-            console.log("searchFlights ejecutado");
             const lang = helper.getLang();
             await expect(page.getByRole('button', { name: copys[lang]?.buscar, exact: true })).toBeVisible();
             await page.getByRole('button', { name: copys[lang]?.buscar, exact: true }).click({ delay: helper.getRandomDelay() });
@@ -231,10 +189,6 @@ const HomePage: THomePage = {
         }
     },
 
-    /**
-     * Función que ejecuta un conjunto de métodos
-     * @returns { Promise<void> } Una promesa resuelta sin valor
-    */
     async run(): Promise<void> {
 
         const {
