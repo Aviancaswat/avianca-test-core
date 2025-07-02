@@ -1,9 +1,9 @@
 name: Playwright Tests
 on:
   push:
-    branches: [ 'feature/home/seleccion-tipo-vuelo' ]
+    branches: [ 'feature/home/seleccion-pasajeros-individual' ]
   pull_request:
-    branches: [ 'feature/home/seleccion-tipo-vuelo' ]
+    branches: [ 'feature/home/seleccion-pasajeros-individual' ]
 jobs:
   test:
     timeout-minutes: 60

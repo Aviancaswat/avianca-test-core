@@ -26,7 +26,7 @@ test.describe("Test End to End Avianca", () => {
   let seatPage: TSeatPage = SeatPage;
   let paymentPage: TPaymentPage = PaymentPage;
 
-  test.beforeEach(async ({}, testInfo) => {
+  test.beforeEach(async ({ }, testInfo) => {
 
     await AviancaCore.initializeBrowser();
     page = AviancaCore.getPage();
@@ -57,9 +57,40 @@ test.describe("Test End to End Avianca", () => {
     // await paymentPage.run();
   });
 
-  test("Funcionalidad de seleccion de tipo de vuelo (ida y vuelta)", async () => {
+  test.skip("Funcionalidad de seleccion de tipo de vuelo (ida y vuelta)", async () => {
     await AviancaCore.initTests();
     await homePage.verifyCookies();
     await homePage.selectOptionTypeFlight();
+  });
+
+  test.skip("Funcionalidad de selección de pasajeros adultos", async () => {
+    await AviancaCore.initTests();
+    await homePage.verifyCookies();
+    await homePage.selectPassengerAdult(5);
+    await homePage.confirmPassengerSelecteds();
+  });
+
+  test.skip("Funcionalidad de selección de pasajero jóvenes", async () => {
+    await AviancaCore.initTests();
+    await homePage.verifyCookies();
+    await homePage.selectPassengerYouths(5);
+    await homePage.confirmPassengerSelecteds();
+  });
+
+  test.skip("Funcionalidad de selección de niños", async () => {
+    await AviancaCore.initTests();
+    await homePage.verifyCookies();
+    await homePage.selectPassengerChildren(4);
+    await homePage.confirmPassengerSelecteds();
+  });
+
+  test("Funcionalidad de selección de infantes o bebés", async () => {
+    await AviancaCore.initTests();
+    await homePage.verifyCookies();
+    await homePage.selectPassengerAdult(3);
+    await homePage.selectPassengerYouths(1);
+    await homePage.selectPassengerChildren(1);
+    await homePage.selectPassengerInfant(3);
+    await homePage.confirmPassengerSelecteds();
   });
 });

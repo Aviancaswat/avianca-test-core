@@ -16,10 +16,11 @@ export type THomePage = {
     searchFlights(): Promise<void>;
     initPage(page: TPage): void;
     run(): Promise<void>;
-    selectPassengerAdult(): Promise<void>;
-    selectPassengerYouths(): Promise<void>;
-    selectPassengerChildren(): Promise<void>;
-    selectPassengerInfant(): Promise<void>;
+    selectPassengerAdult(passengerNumber: number): Promise<void>;
+    selectPassengerYouths(passengerNumber: number): Promise<void>;
+    selectPassengerChildren(passengerNumber: number): Promise<void>;
+    selectPassengerInfant(passengerNumber: number): Promise<void>;
+    confirmPassengerSelecteds(): Promise<void>;
 }
 
 let page: TPage;
@@ -29,20 +30,155 @@ const HomePage: THomePage = {
         page = pageP;
     },
 
-    async selectPassengerAdult(): Promise<void> {
-        throw new Error("Not Implementation");
+    /**
+     * await page.getByRole('button', { name: '' }).nth(1).click();
+            await page.getByRole('button', { name: '' }).nth(2).click();
+            await page.getByRole('button', { name: '' }).nth(3).click();
+            const confirmar = await page.locator('div#paxControlSearchId > div > div:nth-of-type(2) > div > div > button')
+            confirmar.click({ delay: helper.getRandomDelay() });
+    */
+
+    async selectPassengerAdult(numberPassenger: number): Promise<void> {
+
+        if (!page) {
+            throw new Error(m.errors.initializated);
+        }
+
+        if (numberPassenger <= 0) {
+            throw new Error("El número de pasajeros tiene que ser mayor a cero (0)");
+        }
+
+        try {
+
+            const modalPassenger = await page.locator("#paxControlSearchId").isVisible();
+
+            if (modalPassenger) { // Si el modal de pasajeros esta abierto.
+                for (let i = 0; i < numberPassenger; i++) {
+                    await page.getByRole('button', { name: '' }).nth(0).click();
+                }
+            }
+            else { // si el modal de pasajeros esta cerrado.
+                await page.locator('[aria-label="Pasajeros :1"]').click();
+                await page.waitForTimeout(1000);
+                for (let i = 0; i < numberPassenger; i++) {
+                    await page.getByRole('button', { name: '' }).nth(0).click();
+                }
+            }
+
+            await helper.takeScreenshot("seleccion-pasajeros-adultos");
+        }
+        catch (error) {
+            throw new Error("HOMEPAGE => Ha ocurrido un error al seleccionar los pasajeros de adultos | Error: ", error);
+        }
     },
 
-    async selectPassengerYouths(): Promise<void> {
-        throw new Error("Not Implementation");
+    async selectPassengerYouths(numberPassenger: number): Promise<void> {
+
+        if (!page) {
+            throw new Error(m.errors.initializated);
+        }
+
+        if (numberPassenger <= 0) {
+            throw new Error("El número de pasajeros tiene que ser mayor a cero (0)");
+        }
+
+        try {
+
+            const modalPassenger = await page.locator("#paxControlSearchId").isVisible();
+
+            if (modalPassenger) { // Si el modal de pasajeros esta abierto.
+                for (let i = 0; i < numberPassenger; i++) {
+                    await page.getByRole('button', { name: '' }).nth(1).click();
+                }
+            }
+            else { // si el modal de pasajeros esta cerrado.
+                await page.locator('[aria-label="Pasajeros :1"]').click();
+                await page.waitForTimeout(1000);
+                for (let i = 0; i < numberPassenger; i++) {
+                    await page.getByRole('button', { name: '' }).nth(1).click();
+                }
+            }
+
+            await helper.takeScreenshot("seleccion-pasajeros-jovenes");
+        }
+        catch (error) {
+            throw new Error("HOMEPAGE => Ha ocurrido un error al seleccionar los pasajeros de adultos | Error: ", error);
+        }
     },
 
-    async selectPassengerChildren(): Promise<void> {
-        throw new Error("Not Implementation");
+    async selectPassengerChildren(numberPassenger: number): Promise<void> {
+
+        if (!page) {
+            throw new Error(m.errors.initializated);
+        }
+
+        if (numberPassenger <= 0) {
+            throw new Error("El número de pasajeros tiene que ser mayor a cero (0)");
+        }
+
+        try {
+
+            const modalPassenger = await page.locator("#paxControlSearchId").isVisible();
+
+            if (modalPassenger) { // Si el modal de pasajeros esta abierto.
+                for (let i = 0; i < numberPassenger; i++) {
+                    await page.getByRole('button', { name: '' }).nth(2).click();
+                }
+            }
+            else { // si el modal de pasajeros esta cerrado.
+                await page.locator('[aria-label="Pasajeros :1"]').click();
+                await page.waitForTimeout(1000);
+                for (let i = 0; i < numberPassenger; i++) {
+                    await page.getByRole('button', { name: '' }).nth(2).click();
+                }
+            }
+
+            await helper.takeScreenshot("seleccion-pasajeros-jovenes");
+        }
+        catch (error) {
+            throw new Error("HOMEPAGE => Ha ocurrido un error al seleccionar los pasajeros de adultos | Error: ", error);
+        }
     },
-    
-    async selectPassengerInfant(): Promise<void> {
-        throw new Error("Not Implementation");
+
+    //el número de bebes que se pueden seleccionar depende del número de adultos seleccionados
+    async selectPassengerInfant(numberPassenger: number): Promise<void> {
+
+        if (!page) {
+            throw new Error(m.errors.initializated);
+        }
+
+        if (numberPassenger <= 0) {
+            throw new Error("El número de pasajeros tiene que ser mayor a cero (0)");
+        }
+
+        try {
+
+            const modalPassenger = await page.locator("#paxControlSearchId").isVisible();
+
+            if (modalPassenger) { // Si el modal de pasajeros esta abierto.
+                for (let i = 0; i < numberPassenger; i++) {
+                    await page.getByRole('button', { name: '' }).nth(3).click();
+                }
+            }
+            else { // si el modal de pasajeros esta cerrado.
+                await page.locator('[aria-label="Pasajeros :1"]').click();
+                await page.waitForTimeout(1000);
+                for (let i = 0; i < numberPassenger; i++) {
+                    await page.getByRole('button', { name: '' }).nth(3).click();
+                }
+            }
+
+            await helper.takeScreenshot("seleccion-pasajeros-jovenes");
+        }
+        catch (error) {
+            throw new Error("HOMEPAGE => Ha ocurrido un error al seleccionar los pasajeros de adultos | Error: ", error);
+        }
+    },
+
+    async confirmPassengerSelecteds(): Promise<void> {
+        await page.waitForTimeout(500);
+        const confirmar = await page.locator('div#paxControlSearchId > div > div:nth-of-type(2) > div > div > button')
+        await confirmar.click({ delay: helper.getRandomDelay() });
     },
 
     async selectOptionTypeFlight(): Promise<void> {
