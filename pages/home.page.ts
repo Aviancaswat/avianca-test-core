@@ -16,6 +16,10 @@ export type THomePage = {
     searchFlights(): Promise<void>;
     initPage(page: TPage): void;
     run(): Promise<void>;
+    selectPassengerAdult(): Promise<void>;
+    selectPassengerYouths(): Promise<void>;
+    selectPassengerChildren(): Promise<void>;
+    selectPassengerInfant(): Promise<void>;
 }
 
 let page: TPage;
@@ -23,6 +27,22 @@ let page: TPage;
 const HomePage: THomePage = {
     initPage(pageP: TPage): void {
         page = pageP;
+    },
+
+    async selectPassengerAdult(): Promise<void> {
+        throw new Error("Not Implementation");
+    },
+
+    async selectPassengerYouths(): Promise<void> {
+        throw new Error("Not Implementation");
+    },
+
+    async selectPassengerChildren(): Promise<void> {
+        throw new Error("Not Implementation");
+    },
+    
+    async selectPassengerInfant(): Promise<void> {
+        throw new Error("Not Implementation");
     },
 
     async selectOptionTypeFlight(): Promise<void> {
