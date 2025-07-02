@@ -84,7 +84,7 @@ test.describe("Test End to End Avianca", () => {
     await homePage.confirmPassengerSelecteds();
   });
 
-  test("Funcionalidad de selección de infantes o bebés", async () => {
+  test("Funcionalidad de selección de pasajeros adultos, jovenes, niños e infantes", async () => {
     await AviancaCore.initTests();
     await homePage.verifyCookies();
     await homePage.selectPassengerAdult(3);

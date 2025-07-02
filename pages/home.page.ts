@@ -168,7 +168,7 @@ const HomePage: THomePage = {
                 }
             }
 
-            await helper.takeScreenshot("seleccion-pasajeros-jovenes");
+            await helper.takeScreenshot("seleccion-pasajeros-infantes");
         }
         catch (error) {
             throw new Error("HOMEPAGE => Ha ocurrido un error al seleccionar los pasajeros de adultos | Error: ", error);
