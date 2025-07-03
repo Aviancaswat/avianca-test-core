@@ -1,6 +1,8 @@
 import { expect, type Page } from "@playwright/test";
 import { GLOBAL_MESSAGES as m } from "../global.variables";
 import { PlaywrightHelper as helper } from "../helpers/avianca.helper";
+import { error } from "console";
+import { copyPassenger } from "../data/copys/passenger/passenger.copy";
 
 type TPage = Page | undefined | any;
 
@@ -9,6 +11,7 @@ let page: TPage;
 export type TPassengerPage = {
     initPage(page: Page): void;
     fillFormValues(): Promise<void>;
+    saveInformationFuturePayment(): Promise<void>;
     continueToServices(): Promise<void>;
     run(): Promise<void>;
 }
@@ -17,6 +20,29 @@ const PassengerPage: TPassengerPage = {
 
     initPage(pageP: TPage): void {
         page = pageP;
+    },
+
+    async saveInformationFuturePayment(): Promise<void> {
+
+        if (!page) {
+            throw new Error(m.errors.initializated);
+        }
+
+        try {
+            
+            if (copyPassenger.checkSaveInformation) {
+                await page.waitForSelector(".passenger_data");
+                await page.waitForSelector("#guardar-informacion");
+                const checkSaveInformation = await page.locator("#guardar-informacion");
+                await expect(checkSaveInformation).toBeVisible({ timeout: 15_000 });
+                await checkSaveInformation.click({ delay: helper.getRandomDelay() });
+                await helper.takeScreenshot("check-guardar-información-futuras-compras");
+            }
+        }
+        catch (error) {
+            console.error("PASSENGERPAGE => Ha ocurrido un error al click en guardar infromación para futuras compras, | Error: ", error);
+            throw error;
+        }
     },
 
     async fillFormValues(): Promise<void> {
