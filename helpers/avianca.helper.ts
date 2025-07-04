@@ -14,7 +14,11 @@ const PlaywrightHelper = {
         page = pageP;
         testInfo = testInfoP;
     },
-
+    wait(ms: number) {
+        return new Promise((resolve) => {
+            setTimeout(() => resolve(undefined), ms);
+        });
+    },
     getTimestamp(): string {
         const now = new Date();
         const pad = (n: number) => n.toString().padStart(2, '0');

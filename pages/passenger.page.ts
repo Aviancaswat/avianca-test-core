@@ -1,7 +1,6 @@
 import { expect, type Page } from "@playwright/test";
 import { GLOBAL_MESSAGES as m } from "../global.variables";
 import { PlaywrightHelper as helper } from "../helpers/avianca.helper";
-import { error } from "console";
 import { copyPassenger } from "../data/copys/passenger/passenger.copy";
 
 type TPage = Page | undefined | any;
@@ -29,12 +28,11 @@ const PassengerPage: TPassengerPage = {
         }
 
         try {
-            
+
             if (copyPassenger.checkSaveInformation) {
                 await page.waitForSelector(".passenger_data");
-                await page.waitForSelector("#guardar-informacion");
-                const checkSaveInformation = await page.locator("#guardar-informacion");
-                await expect(checkSaveInformation).toBeVisible({ timeout: 15_000 });
+                await helper.wait(5000);
+                const checkSaveInformation = page.locator("#guardar-informacion");
                 await checkSaveInformation.click({ delay: helper.getRandomDelay() });
                 await helper.takeScreenshot("check-guardar-información-futuras-compras");
             }

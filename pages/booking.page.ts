@@ -2,9 +2,9 @@ import { expect, type Page } from "@playwright/test";
 import { GLOBAL_MESSAGES as m } from "../global.variables";
 import { PlaywrightHelper as helper } from "../helpers/avianca.helper";
 import { copyBooking } from "../data/copys/booking/booking.copy";
-
+ 
 type TPage = Page | undefined | any;
-
+ 
 export type TBookingPage = {
     initPage(page: TPage): void;
     selectFlightOutbound(): Promise<void>;
@@ -14,50 +14,39 @@ export type TBookingPage = {
     editFlightSelected(): Promise<void>;
     run(): Promise<void>;
 }
-
+ 
 let page: TPage;
-
+ 
 const BookingPage: TBookingPage = {
     initPage(pageP: TPage): void {
         page = pageP;
     },
-
-    async selectFlightOutbound(): Promise<void> {
-
-        if (!page) {
-            throw new Error(m.errors.initializated);
-        }
-
-        try {
-
-            await page.waitForSelector('#pageWrap');
-            await page.waitForSelector('.journey_price_fare-select_label-text');
-            await expect(page.locator(".journey_price_fare-select_label-text").first()).toBeVisible();
-            await page.locator('.journey_price_fare-select_label-text').first().click({ delay: helper.getRandomDelay() });
-            await page.waitForSelector(".journey_fares");
-            await page.locator('.journey_fares').first().locator('.fare_button').first().click({ delay: helper.getRandomDelay() });
-            await helper.takeScreenshot('flight-seleccion-vuelo-ida');
-        }
-        catch (error) {
-            console.error("BOOKINGPAGE => Ha ocurrido un error en la selección de vuelo de ida | Error: ", error);
-            throw error;
-        }
-    },
-
+ 
     async selectFlightReturn(): Promise<void> {
-
+ 
         if (!page) {
             throw new Error(m.errors.initializated);
         }
-
+ 
         try {
-
-            await page.waitForSelector("#journeysContainerId_1", { timeout: 15000 });
+            await page.waitForSelector("#journeysContainerId_1");
             const containerReturn = page.locator("#journeysContainerId_1");
             await expect(containerReturn).toBeVisible();
-            await containerReturn.locator(".journey_price_fare-select_label-text").first().click({ delay: helper.getRandomDelay() });
+            await page.waitForTimeout(5000);
+            let indiceVueloRegreso = parseInt(copyBooking.numero_vuelo_regreso);
+            const flightOptions = containerReturn.locator('.journey_price_fare-select_label-text');
+            const flightCount = await flightOptions.count();
+ 
+            if (indiceVueloRegreso >= flightCount || indiceVueloRegreso < 0) {
+                throw new Error(`La posición de vuelo '${indiceVueloRegreso}' no es válida. Solo hay ${flightCount} opciones.`);
+            }
+ 
+            await expect(flightOptions.nth(indiceVueloRegreso)).toBeVisible();
+            await flightOptions.nth(indiceVueloRegreso).click({ delay: helper.getRandomDelay() });
+            await page.waitForSelector(".journey_fares_list_item");
             await helper.takeScreenshot('13-seleccion-vuelo-regreso');
-            await containerReturn.locator('.journey_fares').first().locator('.fare_button').first().click({ delay: helper.getRandomDelay() });
+            await page.waitForSelector(".fare-classic");
+            await page.locator('.fare-classic').first().click({ delay: helper.getRandomDelay() });
             await page.waitForTimeout(1500);
         }
         catch (error) {
@@ -65,15 +54,47 @@ const BookingPage: TBookingPage = {
             throw error;
         }
     },
-
-    async validateModalFlight(): Promise<void> {
-
+ 
+    async selectFlightOutbound(): Promise<void> {
+ 
         if (!page) {
             throw new Error(m.errors.initializated);
         }
-
+ 
         try {
-
+ 
+            await page.waitForSelector('#pageWrap');
+            const flightPosition = parseInt(copyBooking['numero_vuelo_ida']);
+            await page.waitForSelector('.journey_price_fare-select_label-text');
+            const flightOptions = page.locator('.journey_price_fare-select_label-text');
+            const flightCount = await flightOptions.count();
+ 
+            if (flightPosition >= flightCount || flightPosition < 0) {
+                throw new Error(`La posición de vuelo '${flightPosition}' no es válida. Solo hay ${flightCount} opciones.`);
+            }
+ 
+            await expect(flightOptions.nth(flightPosition)).toBeVisible();
+            await flightOptions.nth(flightPosition).click({ delay: helper.getRandomDelay() });
+            await page.waitForSelector(".journey_fares_list_item");
+           
+            await page.waitForSelector(".fare-classic");
+            await page.locator('.fare-classic').first().click({ delay: helper.getRandomDelay() });
+            await helper.takeScreenshot('flight-seleccion-vuelo-ida');
+        }
+        catch (error) {
+            console.error("BOOKINGPAGE => Ha ocurrido un error en la selección de vuelo de ida | Error: ", error);
+            throw error;
+        }
+    },
+ 
+    async validateModalFlight(): Promise<void> {
+ 
+        if (!page) {
+            throw new Error(m.errors.initializated);
+        }
+ 
+        try {
+ 
             await page.waitForTimeout(1500);
             const isVisibleModal = await page.locator("#FB310").first().isVisible();
             if (isVisibleModal) {
@@ -86,11 +107,11 @@ const BookingPage: TBookingPage = {
             throw error;
         }
     },
-
+ 
     async editFlightSelected(): Promise<void> {
-
+ 
         try {
-
+ 
             if (copyBooking.editFlightSelected) {
                 console.log("entró a editar la selección del vuelo");
                 const titleSummary = page.locator(".trip-summary-heading-created");
@@ -107,17 +128,17 @@ const BookingPage: TBookingPage = {
             console.error("BOOKING PAGE => Ha ocurrido un error al editar la selección de vuelo");
         }
     },
-
+ 
     async continueToPassenger(): Promise<void> {
-
+ 
         if (!page) {
             throw new Error(m.errors.initializated);
         }
-
+ 
         try {
             const lang = helper.getLang();
             await page.waitForSelector(".trip-summary");
-            if (copyBooking.consulta_condiciones_tarifa) {
+            if(copyBooking.consulta_condiciones_tarifa){
                 const newTabPromise = page.waitForEvent("popup");
                 await page.getByRole('link', { name: copyBooking[lang].informacion_tarifas }).click({ delay: helper.getRandomDelay() });
                 await page.waitForTimeout(3500);
@@ -137,7 +158,7 @@ const BookingPage: TBookingPage = {
             throw error;
         }
     },
-
+ 
     async run(): Promise<void> {
         console.log("Booking page start...");
         await this.selectFlightOutbound();
@@ -149,5 +170,5 @@ const BookingPage: TBookingPage = {
         console.log("Booking page end...");
     }
 }
-
-export { BookingPage };
+ 
+export { BookingPage }
