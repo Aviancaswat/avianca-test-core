@@ -47,7 +47,7 @@ test.describe("Test End to End Avianca", () => {
     page = undefined;
   });
 
-  test.skip('Home => Payment', async ({ }) => {
+  test('Home => Payment', async ({ }) => {
     await AviancaCore.initTests();
     await homePage.run();
     await bookingPage.run();
@@ -55,12 +55,5 @@ test.describe("Test End to End Avianca", () => {
     await servicesPage.run();
     await seatPage.run();
     await paymentPage.run();
-  });
-
-  test("Funcionalidad selección de tipo de vuelo (ida y vuelta o solo ida)", async () => {
-    await AviancaCore.initTests();
-    await homePage.verifyCookies();
-    //lógica de tipo de vuelo
-    await homePage.selectOptionTypeFlight();
   });
 });
