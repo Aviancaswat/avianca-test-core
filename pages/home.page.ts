@@ -183,29 +183,34 @@ const HomePage: THomePage = {
 
     async selectOptionTypeFlight(): Promise<void> {
 
-        await page.waitForSelector("#journeytypeId_0");
+        await page.waitForSelector("#searchComponentDiv");
 
         if (copys.isActiveOptionOutbound) { //si esta seleccionado el vuelo de ida
             const checkIda = page.locator("#journeytypeId_1");
             await checkIda.click({ delay: helper.getRandomDelay() });
-            await helper.takeScreenshot("check-vuelo-ida")
+            await helper.takeScreenshot("check-vuelo-ida");
         }
         else {
             const checkIdaVuelta = page.locator("#journeytypeId_0");
             await checkIdaVuelta.click({ delay: helper.getRandomDelay() });
             await helper.takeScreenshot("check-vuelo-ida-vuelta");
         }
+
+        await page.waitForTimeout(2000);
     },
 
     async verifyCookies(): Promise<void> {
+
         if (!page) {
             throw new Error(m.errors.initializated);
         }
 
         try {
 
-            const consentBtn = page.locator('#onetrust-pc-btn-handler', { delay: helper.getRandomDelay() });
-            if (await consentBtn.isVisible()) {
+            const consentBtn = await page.locator('#onetrust-pc-btn-handler', { delay: helper.getRandomDelay() });
+            const isVisible = consentBtn.isVisible();
+
+            if (isVisible) {
                 await page.waitForSelector("#onetrust-pc-btn-handler");
                 await consentBtn.click();
                 await page.locator('.save-preference-btn-handler.onetrust-close-btn-handler').click({ delay: helper.getRandomDelay() });

@@ -57,7 +57,7 @@ const AviancaCore = {
 
         try {
 
-            await page.goto('https://www.avianca.com/', {
+            await page.goto('https://www.avianca.com/es/', {
                 waitUntil: "domcontentloaded",
                 timeout: 400_000
             });
