@@ -47,50 +47,13 @@ test.describe("Test End to End Avianca", () => {
     page = undefined;
   });
 
-  test.skip('Home => Payment', async ({ }) => { //esta test esta configurada para saltarla en github actions (test.skip)
+  test('Home => Payment', async ({ }) => {
     await AviancaCore.initTests();
     await homePage.run();
     await bookingPage.run();
-    // await passengerPage.run();
-    // await servicesPage.run();
-    // await seatPage.run();
-    // await paymentPage.run();
-  });
-
-  test.skip("Funcionalidad de seleccion de tipo de vuelo (ida y vuelta)", async () => {
-    await AviancaCore.initTests();
-    await homePage.verifyCookies();
-    await homePage.selectOptionTypeFlight();
-  });
-
-  test.skip("Funcionalidad de selección de pasajeros adultos", async () => {
-    await AviancaCore.initTests();
-    await homePage.verifyCookies();
-    await homePage.selectPassengerAdult(5);
-    await homePage.confirmPassengerSelecteds();
-  });
-
-  test.skip("Funcionalidad de selección de pasajero jóvenes", async () => {
-    await AviancaCore.initTests();
-    await homePage.verifyCookies();
-    await homePage.selectPassengerYouths(5);
-    await homePage.confirmPassengerSelecteds();
-  });
-
-  test.skip("Funcionalidad de selección de niños", async () => {
-    await AviancaCore.initTests();
-    await homePage.verifyCookies();
-    await homePage.selectPassengerChildren(4);
-    await homePage.confirmPassengerSelecteds();
-  });
-
-  test("Funcionalidad de selección de pasajeros adultos, jovenes, niños e infantes", async () => {
-    await AviancaCore.initTests();
-    await homePage.verifyCookies();
-    await homePage.selectPassengerAdult(3);
-    await homePage.selectPassengerYouths(1);
-    await homePage.selectPassengerChildren(1);
-    await homePage.selectPassengerInfant(3);
-    await homePage.confirmPassengerSelecteds();
+    await passengerPage.run();
+    await servicesPage.run();
+    await seatPage.run();
+    await paymentPage.run();
   });
 });
