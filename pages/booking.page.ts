@@ -2,9 +2,9 @@ import { expect, type Page } from "@playwright/test";
 import { GLOBAL_MESSAGES as m } from "../global.variables";
 import { PlaywrightHelper as helper } from "../helpers/avianca.helper";
 import { copyBooking } from "../data/copys/booking/booking.copy";
-
+ 
 type TPage = Page | undefined | any;
-
+ 
 export type TBookingPage = {
     initPage(page: TPage): void;
     selectFlightOutbound(): Promise<void>;
@@ -14,14 +14,14 @@ export type TBookingPage = {
     editFlightSelected(): Promise<void>;
     run(): Promise<void>;
 }
-
+ 
 let page: TPage;
-
+ 
 const BookingPage: TBookingPage = {
     initPage(pageP: TPage): void {
         page = pageP;
     },
-
+ 
     async selectFlightReturn(): Promise<void> {
  
         if (!page) {
@@ -29,24 +29,24 @@ const BookingPage: TBookingPage = {
         }
  
         try {
- 
-            await page.waitForSelector("#journeysContainerId_1", { timeout: 15000 });
+            await page.waitForSelector("#journeysContainerId_1");
             const containerReturn = page.locator("#journeysContainerId_1");
             await expect(containerReturn).toBeVisible();
-            await page.waitForTimeout(3000);
+            await page.waitForTimeout(5000);
             let indiceVueloRegreso = parseInt(copyBooking.numero_vuelo_regreso);
-            const posicionVueloRegreso = await page.evaluate((indiceRegreso) => {
-                let reference = 'c12-';
-                let clase=document.querySelector('#journeysContainerId_1')?.querySelector('.journey')?.className as string;
-                let posicionInicial = clase?.lastIndexOf(reference)+reference.length as number;
-                let posicionInicialVuelo = clase?.substring(posicionInicial,posicionInicial+3).trim()
-                let indice = parseInt(posicionInicialVuelo) + indiceRegreso - 1;
-                return indice;
-            },indiceVueloRegreso);
-            await containerReturn.locator('.journey_price_button.ng-tns-c12-'+posicionVueloRegreso).first().click({ delay: helper.getRandomDelay() });
+            const flightOptions = containerReturn.locator('.journey_price_fare-select_label-text');
+            const flightCount = await flightOptions.count();
+ 
+            if (indiceVueloRegreso >= flightCount || indiceVueloRegreso < 0) {
+                throw new Error(`La posición de vuelo '${indiceVueloRegreso}' no es válida. Solo hay ${flightCount} opciones.`);
+            }
+ 
+            await expect(flightOptions.nth(indiceVueloRegreso)).toBeVisible();
+            await flightOptions.nth(indiceVueloRegreso).click({ delay: helper.getRandomDelay() });
+            await page.waitForSelector(".journey_fares_list_item");
             await helper.takeScreenshot('13-seleccion-vuelo-regreso');
-            await page.waitForSelector(".page-journey-selection");
-            await page.locator('.page-journey-selection').first().locator('.light-basic.cro-new-basic-button').click({ delay: helper.getRandomDelay() });
+            await page.waitForSelector(".fare-classic");
+            await page.locator('.fare-classic').first().click({ delay: helper.getRandomDelay() });
             await page.waitForTimeout(1500);
         }
         catch (error) {
@@ -54,22 +54,31 @@ const BookingPage: TBookingPage = {
             throw error;
         }
     },
-
+ 
     async selectFlightOutbound(): Promise<void> {
-
+ 
         if (!page) {
             throw new Error(m.errors.initializated);
         }
-
+ 
         try {
-
+ 
             await page.waitForSelector('#pageWrap');
-            let posicion = parseInt(copyBooking.numero_vuelo_ida) + 1;
-            await page.waitForSelector('.journey_price_button.ng-tns-c12-' + posicion);
-            await expect(page.locator('.journey_price_button.ng-tns-c12-' + posicion).first()).toBeVisible();
-            await page.locator('.journey_price_button.ng-tns-c12-' + posicion).first().click({ delay: helper.getRandomDelay() });
-            await page.waitForSelector(".page-journey-selection");
-            await page.locator('.page-journey-selection').first().locator('.light-basic.cro-new-basic-button').click({ delay: helper.getRandomDelay() });
+            const flightPosition = parseInt(copyBooking['numero_vuelo_ida']);
+            await page.waitForSelector('.journey_price_fare-select_label-text');
+            const flightOptions = page.locator('.journey_price_fare-select_label-text');
+            const flightCount = await flightOptions.count();
+ 
+            if (flightPosition >= flightCount || flightPosition < 0) {
+                throw new Error(`La posición de vuelo '${flightPosition}' no es válida. Solo hay ${flightCount} opciones.`);
+            }
+ 
+            await expect(flightOptions.nth(flightPosition)).toBeVisible();
+            await flightOptions.nth(flightPosition).click({ delay: helper.getRandomDelay() });
+            await page.waitForSelector(".journey_fares_list_item");
+           
+            await page.waitForSelector(".fare-classic");
+            await page.locator('.fare-classic').first().click({ delay: helper.getRandomDelay() });
             await helper.takeScreenshot('flight-seleccion-vuelo-ida');
         }
         catch (error) {
@@ -77,15 +86,15 @@ const BookingPage: TBookingPage = {
             throw error;
         }
     },
-
+ 
     async validateModalFlight(): Promise<void> {
-
+ 
         if (!page) {
             throw new Error(m.errors.initializated);
         }
-
+ 
         try {
-
+ 
             await page.waitForTimeout(1500);
             const isVisibleModal = await page.locator("#FB310").first().isVisible();
             if (isVisibleModal) {
@@ -98,11 +107,11 @@ const BookingPage: TBookingPage = {
             throw error;
         }
     },
-
+ 
     async editFlightSelected(): Promise<void> {
-
+ 
         try {
-
+ 
             if (copyBooking.editFlightSelected) {
                 console.log("entró a editar la selección del vuelo");
                 const titleSummary = page.locator(".trip-summary-heading-created");
@@ -119,7 +128,7 @@ const BookingPage: TBookingPage = {
             console.error("BOOKING PAGE => Ha ocurrido un error al editar la selección de vuelo");
         }
     },
-
+ 
     async continueToPassenger(): Promise<void> {
  
         if (!page) {
@@ -149,7 +158,7 @@ const BookingPage: TBookingPage = {
             throw error;
         }
     },
-
+ 
     async run(): Promise<void> {
         console.log("Booking page start...");
         await this.selectFlightOutbound();
@@ -161,5 +170,5 @@ const BookingPage: TBookingPage = {
         console.log("Booking page end...");
     }
 }
-
-export { BookingPage };
+ 
+export { BookingPage }
