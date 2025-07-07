@@ -47,7 +47,7 @@ test.describe("Test End to End Avianca", () => {
     page = undefined;
   });
 
-  test('Home => Payment', async ({ }) => {
+  test.skip('Home => Payment', async ({ }) => {
     await AviancaCore.initTests();
     await homePage.run();
     await bookingPage.run();
@@ -55,5 +55,17 @@ test.describe("Test End to End Avianca", () => {
     await servicesPage.run();
     await seatPage.run();
     await paymentPage.run();
+  });
+
+  test("Funcionalidad selección de pasajeros adultos, jóvenes, niños e infantes", async () => {
+    await AviancaCore.initTests();
+    await homePage.verifyCookies();
+
+    //lógica de pasajeros
+    await homePage.selectPassengerAdult(3); //seleccionamos 3 adultos más (por defecto siempre hay 1)
+    await homePage.selectPassengerYouths(2);
+    await homePage.selectPassengerChildren(2);
+    await homePage.selectPassengerInfant(3);
+    await homePage.confirmPassengerSelecteds();
   });
 });

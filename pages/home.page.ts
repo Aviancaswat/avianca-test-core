@@ -346,27 +346,14 @@ const HomePage: THomePage = {
     },
 
     async run(): Promise<void> {
-
-        const {
-            verifyCookies,
-            selectOriginOption,
-            selectReturnOption,
-            selectDepartureDate,
-            selectReturnDate,
-            selectPassengers,
-            searchFlights
-        } = HomePage;
-
         console.log("Run Home ejecutado");
-
-        await verifyCookies();
-        await selectOriginOption();
-        await selectReturnOption();
-        await selectDepartureDate();
-        await selectReturnDate();
-        await selectPassengers();
-        await searchFlights();
-
+        await this.verifyCookies();
+        await this.selectOriginOption();
+        await this.selectReturnOption();
+        await this.selectDepartureDate();
+        await this.selectReturnDate();
+        await this.selectPassengers();
+        await this.searchFlights();
         console.log("Run END ejecutado");
     }
 };
