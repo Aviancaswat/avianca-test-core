@@ -214,6 +214,8 @@ const HomePage: THomePage = {
                 await page.waitForSelector("#onetrust-pc-btn-handler");
                 await consentBtn.click();
                 await page.locator('.save-preference-btn-handler.onetrust-close-btn-handler').click({ delay: helper.getRandomDelay() });
+                await page.waitForTimeout(1000);
+                await page.evaluate(() => window.scrollTo(0, 0));
             }
         }
         catch (error) {
