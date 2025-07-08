@@ -57,7 +57,7 @@ test.describe("Test End to End Avianca", () => {
     await paymentPage.run();
   });
 
-  test("Funcionalidad de guardar información para futuras compras", async () => {
+  test("Funcionalidad guardar información para futuras compras", async () => {
     await AviancaCore.initTests();
     await homePage.run();
     await bookingPage.run();
