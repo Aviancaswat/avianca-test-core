@@ -22,7 +22,7 @@ export const copyBooking: BookingCopy = {
     editFlightSelected: true,
     numero_vuelo_ida:'12',
     numero_vuelo_regreso:'8',
-    consulta_condiciones_tarifa:true,
+    consulta_condiciones_tarifa:false,
     es: {
         informacion_tarifas: 'condiciones de tu tarifa',
     },
