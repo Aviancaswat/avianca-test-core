@@ -1,6 +1,7 @@
 import { expect, type Page } from "@playwright/test";
 import { GLOBAL_MESSAGES as m } from "../global.variables";
 import { PlaywrightHelper as helper } from "../helpers/avianca.helper";
+import { emailsData, lastNamesData, phoneNumbersData, userNamesData } from "../utils/variables";
 
 type TPage = Page | undefined | any;
 
@@ -12,6 +13,7 @@ export type TPassengerPage = {
     continueToServices(): Promise<void>;
     run(): Promise<void>;
     saveInformationFuturePayments(): Promise<void>;
+    fillFieldsForPosition(position: number): Promise<void>;
 }
 
 const PassengerPage: TPassengerPage = {
@@ -29,50 +31,7 @@ const PassengerPage: TPassengerPage = {
 
             await page.waitForSelector(".passenger_data_group");
             await helper.takeScreenshot("inicio-llenado-form-pasajeros");
-            await page.evaluate(() => {
-                const userNamesData: Array<string> = [
-                    "john doe",
-                    "jane smith",
-                    "alexander wilson",
-                    "maria gomez",
-                    "roberto perez",
-                    "lucia martinez",
-                    "david hernandez",
-                    "carla jones",
-                    "luis vega",
-                    "susan brown"
-                ];
-
-                const lastNamesData: Array<string> = [
-                    "Doe",
-                    "Smith",
-                    "Wilson",
-                    "Gomez",
-                    "Perez",
-                    "Martinez",
-                    "Hernandez",
-                    "Jones",
-                    "Vega",
-                    "Brown"
-                ];
-
-                const emailsData: Array<string> = [
-                    "monitoreo.digital@avianca.com"
-                ];
-
-                const phoneNumbersData: Array<string> = [
-                    "123456",
-                    "987654",
-                    "654321",
-                    "321654",
-                    "987123",
-                    "456789",
-                    "102938",
-                    "112233",
-                    "778899",
-                    "334455"
-                ];
-
+            await page.evaluate(({ userNamesData, lastNamesData, emailsData, phoneNumbersData }) => {
                 const getDataRandom = (data: Array<string> = []): string => {
                     return data[Math.floor(Math.random() * data.length)];
                 }
@@ -154,7 +113,7 @@ const PassengerPage: TPassengerPage = {
 
                 }
                 setValuesDefaultAutoForm();
-            });
+            }, { userNamesData, lastNamesData, emailsData, phoneNumbersData });
             await helper.takeScreenshot("fin-llenado-form-pasajeros");
         }
         catch (error) {
@@ -205,6 +164,109 @@ const PassengerPage: TPassengerPage = {
         }
         catch (error) {
             console.error("PASSENGER => Ha ocurrido un error: click en guardar información para futuras compras | Error: ", error);
+            throw error;
+        }
+    },
+
+    async fillFieldsForPosition(positionPassenger: number): Promise<void> {
+        if (!page) {
+            throw new Error(m.errors.initializated);
+        }
+
+        try {
+ 
+            await page.waitForSelector(".passenger_data");
+
+            //validando que la posición exista en el DOM
+            const passengers = await (page as Page).locator(".passenger_data_group_item").all();
+            const countPassengers = passengers.length;
+            const isValidPosition = (positionPassenger > 0) && (positionPassenger <= countPassengers);
+
+            if (!isValidPosition) {
+                throw new Error("El pasajero con la pocisión solicitada no existe. Escoje una posición válida");
+            }
+
+            await (page as Page).evaluate(({ positionPassenger, emailsData, phoneNumbersData, userNamesData, lastNamesData }) => {
+                //funciones
+                const getDataRandom = (data: Array<string> = []): string => {
+                    return data[Math.floor(Math.random() * data.length)];
+                }
+
+                const getValueElement = (element: HTMLInputElement): string => {
+                    let value: string | null = null;
+                    if (element.name === "email" || element.name === "confirmEmail") {
+                        value = getDataRandom(emailsData);
+                    }
+                    else if (element.name === "phone_phoneNumberId") {
+                        value = getDataRandom(phoneNumbersData);
+                    }
+                    else if (element.id.includes("IdFirstName")) {
+                        value = getDataRandom(userNamesData);
+                    }
+                    else {
+                        value = getDataRandom(lastNamesData);
+                    }
+                    return value;
+                }
+
+                const getButtonAndClickItem = () => {
+                    const listOptions = document.querySelector(".ui-dropdown_list");
+                    const buttonElement = listOptions?.querySelector(".ui-dropdown_item>button") as HTMLButtonElement;
+                    buttonElement.click();
+                }
+
+                // variables
+                const passenger = document.querySelectorAll(".passenger_data_group_item");
+                const arrayPassenger = Array.from(passenger);
+                const passengerToFill = arrayPassenger[positionPassenger - 1];
+                const elements = passengerToFill.querySelectorAll(".ui-input");
+
+                Array.from(elements).forEach((element) => {
+
+                    if (element.tagName === "BUTTON") {
+                        const elementButton = element as HTMLButtonElement;
+                        elementButton.click();
+                        const listOptions = passengerToFill.querySelector(".ui-dropdown_list");
+                        (listOptions?.querySelector(".ui-dropdown_item>button") as HTMLButtonElement)?.click();
+
+                        if (element.id === "passengerId") {
+                            elementButton.click();
+                            setTimeout(() => {
+                                getButtonAndClickItem();
+                            }, 1000);
+                        }
+                        else if (element.id === 'phone_prefixPhoneId') {
+                            setTimeout(() => {
+                                elementButton.click();
+                                getButtonAndClickItem();
+                            }, 1000);
+                        }
+                    }
+                    else if (element.tagName === "INPUT") {
+                        const elementInput = element as HTMLInputElement;
+                        const containers = passengerToFill.querySelectorAll(".ui-input-container");
+                        Array.from(containers).forEach(e => { e.classList.add("is-focused") });
+                        let eventBlur: Event = new Event("blur");
+                        let eventFocus: Event = new Event("focus");
+                        elementInput.value = getValueElement(elementInput);
+                        ['change', 'input'].forEach(event => {
+                            let handleEvent = new Event(event, { bubbles: true, cancelable: false });
+                            element.dispatchEvent(handleEvent);
+                        });
+
+                        element.dispatchEvent(eventFocus);
+                        setTimeout(() => {
+                            element.dispatchEvent(eventBlur);
+                            Array.from(containers).forEach(e => { e.classList.remove("is-focused") });
+                        }, 1000);
+                    }
+                });
+            }, { positionPassenger, emailsData, phoneNumbersData, userNamesData, lastNamesData });
+            await helper.takeScreenshot("llenado-formulario-pasajero-#" + positionPassenger);
+            await page.waitForTimeout(10000);
+        }
+        catch (error) {
+            console.error("PASSENGER => Ha ocurrido un error al llenar los campos de los pasajeros por posición | Error: ", error);
             throw error;
         }
     }
