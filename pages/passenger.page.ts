@@ -263,7 +263,7 @@ const PassengerPage: TPassengerPage = {
                 });
             }, { positionPassenger, emailsData, phoneNumbersData, userNamesData, lastNamesData });
             await helper.takeScreenshot("llenado-formulario-pasajero-#" + positionPassenger);
-            await page.waitForTimeout(10000);
+            await page.waitForTimeout(1000);
         }
         catch (error) {
             console.error("PASSENGER => Ha ocurrido un error al llenar los campos de los pasajeros por posición | Error: ", error);
