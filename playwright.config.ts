@@ -2,13 +2,13 @@ import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests',
-  timeout: 500000,
+  timeout: 50000,
   reporter: 'html',
   outputDir: 'test-results',
   use: {
     headless: true,
     screenshot: 'on',
-    video: 'off',
+    video: 'on',
     ignoreHTTPSErrors: true,
     launchOptions: {
       args: ['--disable-http2']
@@ -26,7 +26,7 @@ export default defineConfig({
         extraHTTPHeaders: {
           'accept-language': 'es-ES,es;q=0.9',
         },
-        video: 'off'
+        video: 'on'
       },
     },
   ],

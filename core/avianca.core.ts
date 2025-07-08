@@ -28,7 +28,7 @@ const AviancaCore = {
                 timezoneId: 'America/New_York',
                 deviceScaleFactor: 1,
                 recordVideo: {
-                    dir: 'test-results/videos/',
+                    dir: 'playwright-report/videos/',
                     size: { width: 1280, height: 720 }
                 },
             });
