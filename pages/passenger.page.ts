@@ -11,6 +11,7 @@ export type TPassengerPage = {
     fillFormValues(): Promise<void>;
     continueToServices(): Promise<void>;
     run(): Promise<void>;
+    saveInformationFuturePayments(): Promise<void>;
 }
 
 const PassengerPage: TPassengerPage = {
@@ -188,7 +189,25 @@ const PassengerPage: TPassengerPage = {
         console.log("Passenger page ended...");
     },
 
-}
+    async saveInformationFuturePayments(): Promise<void> {
 
+        if (!page) {
+            throw new Error(m.errors.initializated);
+        }
+
+        try {
+            await page.waitForSelector(".passenger_data");
+            const elementSaveInformation = page.locator("label[for='guardar-informacion']");
+            expect(elementSaveInformation).toBeVisible({ timeout: 30000 });
+            await elementSaveInformation.click({ delay: helper.getRandomDelay() });
+            await helper.takeScreenshot("check-guardar-informacion-futuras-compras");
+            await page.waitForTimeout(2000);
+        }
+        catch (error) {
+            console.error("PASSENGER => Ha ocurrido un error: click en guardar información para futuras compras | Error: ", error);
+            throw error;
+        }
+    }
+}
 
 export { PassengerPage };
