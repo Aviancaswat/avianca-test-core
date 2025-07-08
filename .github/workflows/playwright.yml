@@ -1,9 +1,9 @@
 name: Playwright Tests
 on:
   push:
-    branches: [ 'feature/passenger/guardar-informacion-futuras-compras' ]
+    branches: [ '__disabled__' ]
   pull_request:
-    branches: [ 'feature/passenger/guardar-informacion-futuras-compras' ]
+    branches: [ '__disabled__' ]
 jobs:
   test:
     timeout-minutes: 60
@@ -25,11 +25,4 @@ jobs:
       with:
         name: playwright-report
         path: playwright-report/
-        retention-days: 30
-    - name: Upload Test Results
-      uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
-      with:
-        name: test-results
-        path: test-results/
         retention-days: 30
