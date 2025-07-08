@@ -318,6 +318,7 @@ const HomePage: THomePage = {
         }
 
         try {
+            await page.waitForTimeout(2000);
             await page.getByRole('button', { name: '' }).nth(1).click();
             await page.getByRole('button', { name: '' }).nth(2).click();
             await page.getByRole('button', { name: '' }).nth(3).click();
