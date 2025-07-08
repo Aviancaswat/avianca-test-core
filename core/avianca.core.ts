@@ -27,10 +27,10 @@ const AviancaCore = {
                 locale: 'en-US',
                 timezoneId: 'America/New_York',
                 deviceScaleFactor: 1,
-                recordVideo: {
-                    dir: 'playwright-report/videos/',
-                    size: { width: 1280, height: 720 }
-                },
+                // recordVideo: {
+                //     dir: 'test-results/videos/',
+                //     size: { width: 1280, height: 720 }
+                // },
             });
 
             page = await context?.newPage();

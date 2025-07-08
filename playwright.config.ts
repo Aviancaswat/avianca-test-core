@@ -8,7 +8,7 @@ export default defineConfig({
   use: {
     headless: true,
     screenshot: 'on',
-    video: 'on',
+    video: 'off',
     ignoreHTTPSErrors: true,
     launchOptions: {
       args: ['--disable-http2']
@@ -26,7 +26,7 @@ export default defineConfig({
         extraHTTPHeaders: {
           'accept-language': 'es-ES,es;q=0.9',
         },
-        video: 'on'
+        video: 'off'
       },
     },
   ],
