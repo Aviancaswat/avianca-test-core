@@ -3,8 +3,8 @@ import type { copysType, Lang } from "../types/copy.type";
 const copys: copysType = {
     idioma: 'es' as Lang,
     pais: 'CO',
-    fecha_salida: 'jul 10',
-    fecha_llegada: 'jul 17',
+    fecha_salida: 'jul 20',
+    fecha_llegada: 'jul 28',
     ciudad_origen: 'CLO',
     ciudad_destino: 'BOG',
     es: {
