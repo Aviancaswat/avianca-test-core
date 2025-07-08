@@ -283,7 +283,7 @@ const HomePage: THomePage = {
 
             await page.waitForSelector("#departureInputDatePickerId");
             const fechaIda = await page.locator('id=departureInputDatePickerId');
-            fechaIda.click({ delay: helper.getRandomDelay() });
+            await fechaIda.click({ delay: helper.getRandomDelay() });
             await page.locator('span').filter({ hasText: copys['fecha_salida'] }).click({ delay: helper.getRandomDelay() });
             await helper.takeScreenshot('seleccion-fecha-ida');
         }
