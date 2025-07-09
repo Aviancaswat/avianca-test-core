@@ -16,6 +16,7 @@ export type TPassengerPage = {
     fillFieldsForPosition(position: number): Promise<void>;
     confirmAuthorizeDataProcessing(): Promise<void>;
     acceptPersonalDataUsageForOffers(): Promise<void>;
+    fillformMainPassenger(): Promise<void>;
 }
 
 const PassengerPage: TPassengerPage = {
@@ -317,6 +318,99 @@ const PassengerPage: TPassengerPage = {
 
         } catch (error) {
             console.error("PASSENGERPAGE => Ha ocurrido un error al confirmar el uso de datos personales para promociones | Error: ", error);
+            throw error;
+        }
+    },
+
+    /** Sirve para llenar los campos del formulario de titular de la reserva */
+    async fillformMainPassenger(): Promise<void> {
+
+        if (!page) {
+            throw new Error(m.errors.initializated);
+        }
+
+        try {
+
+            await page.waitForSelector(".passenger_data");
+            await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }));
+            await this.fillFieldsForPosition(1);
+            await page.evaluate(({ emailsData, phoneNumbersData, userNamesData, lastNamesData }) => {
+                const getDataRandom = (data: Array<string> = []): string => {
+                    return data[Math.floor(Math.random() * data.length)];
+                }
+                const getValueElement = (element: HTMLInputElement): string => {
+                    let value: string | null = null;
+                    if (element.name === "email" || element.name === "confirmEmail") {
+                        value = getDataRandom(emailsData);
+                    }
+                    else if (element.name === "phone_phoneNumberId") {
+                        value = getDataRandom(phoneNumbersData);
+                    }
+                    else if (element.id.includes("IdFirstName")) {
+                        value = getDataRandom(userNamesData);
+                    }
+                    else {
+                        value = getDataRandom(lastNamesData);
+                    }
+                    return value;
+                }
+                const getButtonAndClickItem = () => {
+                    const listOptions = document.querySelector(".ui-dropdown_list");
+                    const buttonElement = listOptions?.querySelector(".ui-dropdown_item>button") as HTMLButtonElement;
+                    buttonElement.click();
+                }
+
+                const containerMainPassenger = document.querySelector(".contact_data");
+                if (!containerMainPassenger) throw new Error("No ha sido encontrado el titular de la reserva en el DOM");
+
+                const elements = containerMainPassenger.querySelectorAll(".ui-input");
+
+                Array.from(elements).forEach((element) => {
+
+                    if (element.tagName === "BUTTON") {
+                        const elementButton = element as HTMLButtonElement;
+                        elementButton.click();
+                        const listOptions = containerMainPassenger.querySelector(".ui-dropdown_list");
+                        (listOptions?.querySelector(".ui-dropdown_item>button") as HTMLButtonElement)?.click();
+
+                        if (element.id === "passengerId") {
+                            elementButton.click();
+                            setTimeout(() => {
+                                getButtonAndClickItem();
+                            }, 1000);
+                        }
+                        else if (element.id === 'phone_prefixPhoneId') {
+                            setTimeout(() => {
+                                elementButton.click();
+                                getButtonAndClickItem();
+                            }, 1000);
+                        }
+                    }
+                    else if (element.tagName === "INPUT") {
+                        const elementInput = element as HTMLInputElement;
+                        const containers = containerMainPassenger.querySelectorAll(".ui-input-container");
+                        Array.from(containers).forEach(e => { e.classList.add("is-focused") });
+                        let eventBlur: Event = new Event("blur");
+                        let eventFocus: Event = new Event("focus");
+                        elementInput.value = getValueElement(elementInput);
+                        ['change', 'input'].forEach(event => {
+                            let handleEvent = new Event(event, { bubbles: true, cancelable: false });
+                            element.dispatchEvent(handleEvent);
+                        });
+
+                        element.dispatchEvent(eventFocus);
+                        setTimeout(() => {
+                            element.dispatchEvent(eventBlur);
+                            Array.from(containers).forEach(e => { e.classList.remove("is-focused") });
+                        }, 1000);
+                    }
+                });
+            }, { emailsData, phoneNumbersData, userNamesData, lastNamesData });
+
+            await helper.takeScreenshot("llenado-campos-titular-reserva");
+            await page.waitForTimeout(10000);
+        } catch (error) {
+            console.error("PASSENGERPAGE => Ha ocurrido un error al llenar los campos del pasajero titular del la reserva | Error: ", error);
             throw error;
         }
     }
