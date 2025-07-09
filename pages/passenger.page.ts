@@ -3,7 +3,7 @@ import { GLOBAL_MESSAGES as m } from "../global.variables";
 import { PlaywrightHelper as helper } from "../helpers/avianca.helper";
 import { emailsData, lastNamesData, phoneNumbersData, userNamesData } from "../utils/variables";
 
-type TPage = Page | undefined | any;
+type TPage = Page | undefined;
 
 let page: TPage;
 
@@ -14,6 +14,7 @@ export type TPassengerPage = {
     run(): Promise<void>;
     saveInformationFuturePayments(): Promise<void>;
     fillFieldsForPosition(position: number): Promise<void>;
+    confirmAuthorizeDataProcessing(): Promise<void>;
 }
 
 const PassengerPage: TPassengerPage = {
@@ -23,6 +24,7 @@ const PassengerPage: TPassengerPage = {
     },
 
     async fillFormValues(): Promise<void> {
+
         if (!page) {
             throw new Error(m.errors.initializated);
         }
@@ -107,10 +109,11 @@ const PassengerPage: TPassengerPage = {
                         }
                     });
 
-                    await page.waitForSelector("id=acceptNewCheckbox");
-                    await expect(page.locator('id=acceptNewCheckbox')).toBeVisible();
-                    await (page.locator('id=acceptNewCheckbox')).click()
-
+                    if (page) {
+                        await page.waitForSelector("id=acceptNewCheckbox");
+                        await expect(page.locator('id=acceptNewCheckbox')).toBeVisible();
+                        await (page.locator('id=acceptNewCheckbox')).click();
+                    }
                 }
                 setValuesDefaultAutoForm();
             }, { userNamesData, lastNamesData, emailsData, phoneNumbersData });
@@ -174,7 +177,7 @@ const PassengerPage: TPassengerPage = {
         }
 
         try {
- 
+
             await page.waitForSelector(".passenger_data");
 
             //validando que la posición exista en el DOM
@@ -267,6 +270,29 @@ const PassengerPage: TPassengerPage = {
         }
         catch (error) {
             console.error("PASSENGER => Ha ocurrido un error al llenar los campos de los pasajeros por posición | Error: ", error);
+            throw error;
+        }
+    },
+
+    /** Sirve para confirmar la autorización el tratamiento de datos en el formulario de pasajeros */
+    async confirmAuthorizeDataProcessing(): Promise<void> {
+
+        if (!page) {
+            throw new Error(m.errors.initializated);
+        }
+
+        try {
+
+            await page.waitForSelector(".passenger_data");
+            await page.evaluate(() => { window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }) });
+            const checkAuthorizeData = page.locator("label[for='acceptNewCheckbox']");
+            await expect(checkAuthorizeData).toBeVisible({ timeout: 15000 });
+            await checkAuthorizeData.click({ delay: helper.getRandomDelay() });
+            await helper.takeScreenshot("confirmacion-autorizacion-tratamiento-datos");
+            await page.waitForTimeout(10000);
+
+        } catch (error) {
+            console.error("PASSENGERPAGE => Ha ocurrido un error al confirmar la autorización de tratamiento de datos | Error: ", error);
             throw error;
         }
     }
