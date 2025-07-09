@@ -313,7 +313,7 @@ const PassengerPage: TPassengerPage = {
             await expect(checkAcceptUseDataOffers).toBeVisible({ timeout: 15000 });
             await checkAcceptUseDataOffers.click({ delay: helper.getRandomDelay() });
             await helper.takeScreenshot("aceptar-uso-datos-promociones");
-            await page.waitForTimeout(10000);
+            await page.waitForTimeout(1000);
 
         } catch (error) {
             console.error("PASSENGERPAGE => Ha ocurrido un error al confirmar el uso de datos personales para promociones | Error: ", error);
