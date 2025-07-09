@@ -408,7 +408,7 @@ const PassengerPage: TPassengerPage = {
             }, { emailsData, phoneNumbersData, userNamesData, lastNamesData });
 
             await helper.takeScreenshot("llenado-campos-titular-reserva");
-            await page.waitForTimeout(10000);
+            await page.waitForTimeout(1000);
         } catch (error) {
             console.error("PASSENGERPAGE => Ha ocurrido un error al llenar los campos del pasajero titular del la reserva | Error: ", error);
             throw error;
