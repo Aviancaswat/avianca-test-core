@@ -15,6 +15,7 @@ export type TPassengerPage = {
     saveInformationFuturePayments(): Promise<void>;
     fillFieldsForPosition(position: number): Promise<void>;
     confirmAuthorizeDataProcessing(): Promise<void>;
+    acceptPersonalDataUsageForOffers(): Promise<void>;
 }
 
 const PassengerPage: TPassengerPage = {
@@ -289,10 +290,33 @@ const PassengerPage: TPassengerPage = {
             await expect(checkAuthorizeData).toBeVisible({ timeout: 15000 });
             await checkAuthorizeData.click({ delay: helper.getRandomDelay() });
             await helper.takeScreenshot("confirmacion-autorizacion-tratamiento-datos");
-            await page.waitForTimeout(10000);
+            await page.waitForTimeout(1000);
 
         } catch (error) {
             console.error("PASSENGERPAGE => Ha ocurrido un error al confirmar la autorización de tratamiento de datos | Error: ", error);
+            throw error;
+        }
+    },
+
+    /** Sirve para aceptar el uso de datos personales para envio de promiciones y ofertas */
+    async acceptPersonalDataUsageForOffers(): Promise<void> {
+
+        if (!page) {
+            throw new Error(m.errors.initializated);
+        }
+
+        try {
+
+            await page.waitForSelector(".passenger_data");
+            await page.evaluate(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }));
+            const checkAcceptUseDataOffers = page.locator("label[for='sendNewsLetter']");
+            await expect(checkAcceptUseDataOffers).toBeVisible({ timeout: 15000 });
+            await checkAcceptUseDataOffers.click({ delay: helper.getRandomDelay() });
+            await helper.takeScreenshot("aceptar-uso-datos-promociones");
+            await page.waitForTimeout(10000);
+
+        } catch (error) {
+            console.error("PASSENGERPAGE => Ha ocurrido un error al confirmar el uso de datos personales para promociones | Error: ", error);
             throw error;
         }
     }
