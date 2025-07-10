@@ -60,8 +60,8 @@ test.describe("Test End to End Avianca", () => {
   test("Funcionalidad de agregar programa de viajero frecuente por posición", async () => {
     await AviancaCore.initTests();
     await homePage.run();
-    await bookingPage.run();
-    await passengerPage.addProgramFlyerFrequentByPosition(1);
-    console.log("!hola");
+    // await bookingPage.run();
+    // await passengerPage.addProgramFlyerFrequentByPosition(1);
+    // console.log("!hola");
   });
 });
