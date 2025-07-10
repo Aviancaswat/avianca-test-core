@@ -62,5 +62,6 @@ test.describe("Test End to End Avianca", () => {
     await homePage.run();
     await bookingPage.run();
     await passengerPage.addProgramFlyerFrequentByPosition(1);
+    console.log("!hola");
   });
 });
