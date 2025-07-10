@@ -19,6 +19,7 @@ export type TPassengerPage = {
     acceptPersonalDataUsageForOffers(): Promise<void>;
     fillformMainPassenger(): Promise<void>;
     addProgramFlyerFrequentByPosition(position: number): Promise<void>;
+    addProgramFlyerFrequentAll(): Promise<void>;
 }
 
 const PassengerPage: TPassengerPage = {
@@ -467,11 +468,9 @@ const PassengerPage: TPassengerPage = {
             const childrenToSelected = childrenList[positionChildrenToSelected];
             await childrenToSelected.click({ delay: helper.getRandomDelay() });
             await helper.takeScreenshot("seleccion-programa-viajero-frecuente-agregado");
-            await page.waitForTimeout(3000);
 
-            // Nota: si escoge la opcion de No Aplica no se hace mas nada 
+            // Nota: si escoge la opcion de No Aplica (#1) no se agrega el número del viajero
             // (el input de viajero frecuente no aparece)
-
             if (optionUser !== 1) {
                 // esperamos que salga el nuevo input para número de viajero
                 await page.waitForTimeout(1500);
@@ -487,7 +486,36 @@ const PassengerPage: TPassengerPage = {
             console.error(`PASSENGERPAGE => Ha ocurrido un error al agregar el programa de viajero frecuente en la posición ${positionPassenger} | Error: , ${error}`);
             throw error;
         }
-    }
+    },
+
+    async addProgramFlyerFrequentAll(): Promise<void> {
+
+        if (!page) {
+            throw new Error(m.errors.initializated);
+        }
+
+        try {
+
+            await page.waitForSelector(".passenger_data");
+            const passengerList = await page.locator(".passenger_data_group_item").all();
+            const passengerSize = passengerList.length;
+
+            for (let i = 1; i <= passengerSize; i++) {
+                const indexP = i - 1; 
+                const passengerItem = passengerList[indexP];
+                const programFlyr = await passengerItem.locator(".FB946-add-program-btn");
+                const isContainProgramFlyr = await programFlyr.isVisible();
+                if (!isContainProgramFlyr) {
+                    console.log(`El pasajero con la posición ${i} no tiene el programa de viajero frecuente`);
+                    continue;
+                }
+                await this.addProgramFlyerFrequentByPosition(i);
+            }
+        } catch (error) {
+            console.error("PASSENGERPAGE => Ha ocurrido un error al agregar el programa de viajeros frecuentes para todos los pasajeros | Error: ", error);
+            throw error;
+        }
+    },
 }
 
 export { PassengerPage };

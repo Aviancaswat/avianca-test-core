@@ -57,7 +57,7 @@ test.describe("Test End to End Avianca", () => {
     await paymentPage.run();
   });
 
-  test("Funcionalidad de agregar programa de viajero frecuente", async () => {
+  test("Funcionalidad de agregar programa de viajero frecuente por posición", async () => {
     await AviancaCore.initTests();
     await homePage.run();
     await bookingPage.run();
