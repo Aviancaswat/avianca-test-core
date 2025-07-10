@@ -47,7 +47,7 @@ test.describe("Test End to End Avianca", () => {
     page = undefined;
   });
 
-  test.skip('Home => Payment', async ({ }) => {
+  test('Home => Payment', async ({ }) => {
     await AviancaCore.initTests();
     await homePage.run();
     await bookingPage.run();
@@ -55,21 +55,5 @@ test.describe("Test End to End Avianca", () => {
     await servicesPage.run();
     await seatPage.run();
     await paymentPage.run();
-  });
-
-  test("Funcionalidad de agregar programa de viajero frecuente por posición", async () => {
-    await AviancaCore.initTests();
-    await homePage.run();
-    // await bookingPage.run();
-    // await passengerPage.addProgramFlyerFrequentByPosition(1);
-    // console.log("!hola");
-  });
-
-  test("Funcionalidad de agregar programa de viajero frecuente para todos los pasajeros", async () => {
-    await AviancaCore.initTests();
-    await homePage.run();
-    // await bookingPage.run();
-    // await passengerPage.addProgramFlyerFrequentAll();
-    // console.log("!hola");
   });
 });
