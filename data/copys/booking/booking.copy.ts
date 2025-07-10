@@ -20,8 +20,8 @@ interface BookingCopy {
 
 export const copyBooking: BookingCopy = {
     editFlightSelected: true,
-    numero_vuelo_ida:'1',
-    numero_vuelo_regreso:'1',
+    numero_vuelo_ida:'0',
+    numero_vuelo_regreso:'0',
     consulta_condiciones_tarifa:false,
     es: {
         informacion_tarifas: 'condiciones de tu tarifa',
