@@ -2,6 +2,7 @@ import { expect, type Page } from "@playwright/test";
 import { GLOBAL_MESSAGES as m } from "../global.variables";
 import { PlaywrightHelper as helper } from "../helpers/avianca.helper";
 import { emailsData, lastNamesData, phoneNumbersData, userNamesData } from "../utils/variables";
+import { copyPaseenger } from "../data/copys/passenger/passenger.copy";
 
 type TPage = Page | undefined;
 
@@ -17,6 +18,7 @@ export type TPassengerPage = {
     confirmAuthorizeDataProcessing(): Promise<void>;
     acceptPersonalDataUsageForOffers(): Promise<void>;
     fillformMainPassenger(): Promise<void>;
+    addProgramFlyerFrequentByPosition(position: number): Promise<void>;
 }
 
 const PassengerPage: TPassengerPage = {
@@ -406,11 +408,83 @@ const PassengerPage: TPassengerPage = {
                     }
                 });
             }, { emailsData, phoneNumbersData, userNamesData, lastNamesData });
-
             await helper.takeScreenshot("llenado-campos-titular-reserva");
             await page.waitForTimeout(1000);
         } catch (error) {
             console.error("PASSENGERPAGE => Ha ocurrido un error al llenar los campos del pasajero titular del la reserva | Error: ", error);
+            throw error;
+        }
+    },
+
+    /** Sirve para agregar la opción del programa de viajero frecuente dada una posición */
+    async addProgramFlyerFrequentByPosition(positionPassenger: number): Promise<void> {
+
+        if (!page) {
+            throw new Error(m.errors.initializated);
+        }
+
+        try {
+
+            await page.waitForSelector(".passenger_data");
+            const passengers = await page.locator(".passenger_data_group_item").all();
+            const countPassengers = passengers.length;
+            const isValidPosition = (positionPassenger > 0) && (positionPassenger <= countPassengers);
+
+            if (!isValidPosition) {
+                throw new Error("El pasajero con la pocisión solicitada no existe. Escoje una posición válida");
+            }
+
+            const arrayPassengers = Array.from(passengers);
+            const indexPassenger = positionPassenger - 1;
+            const passengerToAddedProgram = arrayPassengers[indexPassenger];
+
+            //encontrando en boton de agregar programa de viajero frecuente
+            const buttonAddProgram = await passengerToAddedProgram.locator(".FB946-add-program-btn");
+            await expect(buttonAddProgram).toBeVisible({ timeout: 15000 });
+            await buttonAddProgram.click({ delay: helper.getRandomDelay() });
+
+            //esperamos que salga el dropdown del pasajero seleccionado por la posición
+            const optionsProgramFlyer = page.locator(`#customerPrograms${indexPassenger}`);
+            await expect(optionsProgramFlyer).toBeVisible({ timeout: 15000 });
+            await optionsProgramFlyer.click({ delay: helper.getRandomDelay() });
+
+            //espera para que salga la lista de opciones
+            const listOptions = await page.locator("#listId_customerPrograms");
+            await expect(listOptions).toBeVisible({ timeout: 15000 });
+            const childrenList = await listOptions.locator("li").all();
+            const countChildren = childrenList.length;
+            const optionUser = copyPaseenger.optionProgramFlyerFrequent;
+
+            if (optionUser < 0) {
+                throw new Error("La opción escogida por el usuario para el programa de viajero frecuente no es válida");
+            }
+
+            if (countChildren < 0) {
+                throw new Error("No hay Opciones disponibles en el programa de viajero frecuente");
+            }
+
+            let positionChildrenToSelected = optionUser === 0 ? Math.floor(Math.random() * countChildren) : optionUser;
+            const childrenToSelected = childrenList[positionChildrenToSelected];
+            await childrenToSelected.click({ delay: helper.getRandomDelay() });
+            await helper.takeScreenshot("seleccion-programa-viajero-frecuente-agregado");
+            await page.waitForTimeout(3000);
+
+            // Nota: si escoge la opcion de No Aplica no se hace mas nada 
+            // (el input de viajero frecuente no aparece)
+
+            if (optionUser !== 1) {
+                // esperamos que salga el nuevo input para número de viajero
+                await page.waitForTimeout(1500);
+                const inputsUI = await passengerToAddedProgram.locator("input.ui-input").all();
+                const inputsLenght = inputsUI.length;
+                const inputToFillNumberFlyer = inputsUI[inputsLenght - 1];
+                await inputToFillNumberFlyer.click({ delay: helper.getRandomDelay() });
+                await inputToFillNumberFlyer.fill("123456");
+                await helper.takeScreenshot("llenado-numero-viajero-frecuente");
+            }
+            await page.waitForTimeout(1000);
+        } catch (error) {
+            console.error(`PASSENGERPAGE => Ha ocurrido un error al agregar el programa de viajero frecuente en la posición ${positionPassenger} | Error: , ${error}`);
             throw error;
         }
     }
