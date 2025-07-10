@@ -5,7 +5,7 @@ const copys: copysType = {
     pais: 'CO',
     fecha_salida: 'jul 20',
     fecha_llegada: 'jul 28',
-    ciudad_origen: 'CLO',
+    ciudad_origen: 'BAQ',
     ciudad_destino: 'BOG',
     es: {
         origen: 'Origen',
