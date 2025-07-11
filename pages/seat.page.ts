@@ -12,6 +12,7 @@ export type TSeatPage = {
     seleccionar_asiento_tarifa_economy(numero_pasajeros): Promise<void>;
     seleccionar_asiento_tarifa_business(numero_pasajeros): Promise<void>;
     seleccionar_asiento_emergency(numero_pasajeros): Promise<void>;
+    seleccionar_asientos(tarifaAsientos,numero_pasajeros): Promise<void>;
     confirmar_asientos_ida(): Promise<void>;
     seleccionar_asientos_regreso(): Promise<void>;
     ir_a_pagar(): Promise<void>;
@@ -33,18 +34,38 @@ const SeatPage: TSeatPage = {
         }
         try {
              const {
+                    seleccionar_asientos,
+                } = SeatPage;
+                await page.waitForTimeout(12000);
+                await helper.takeScreenshot("Pagina-de-seleccion-asientos");
+                //const pasajeros = page.locator(".pax-selector_pax-avatar")
+                const countPasajeros = await page.locator(".pax-selector_pax-avatar").count();
+                const cambiarAsientosSeleccionados = copySeat.cambiarAsientosSeleccionados;
+                const tarifaAsientos= copySeat.tarifaDeAsientos;
+                await seleccionar_asientos(tarifaAsientos,countPasajeros);
+                if(cambiarAsientosSeleccionados){
+                    await seleccionar_asientos(tarifaAsientos,countPasajeros);
+                }
+            }
+        catch (error) {
+            console.error("ASIENTOS IDA => Ocurrió un error al verificar los asientos de ida | Error: ", error);
+            throw error;
+        }
+    },
+
+    async seleccionar_asientos(tarifaAsientos,countPasajeros): Promise<void> {
+        if (!page) {
+            throw new Error(m.errors.initializated);
+        }
+        try {
+            const {
                     seleccionar_asiento_tarifa_business,
                     seleccionar_asiento_tarifa_premium,
                     seleccionar_asiento_tarifa_plus,
                     seleccionar_asiento_tarifa_economy,
                     seleccionar_asiento_emergency,
                 } = SeatPage;
-                await page.waitForTimeout(12000);
-                await helper.takeScreenshot("Pagina-de-seleccion-asientos");
-                //const pasajeros = page.locator(".pax-selector_pax-avatar")
-                const countPasajeros = await page.locator(".pax-selector_pax-avatar").count();
-                const tarifaAsientos= copySeat.tarifaDeAsientos;
-                switch (tarifaAsientos) {
+            switch (tarifaAsientos) {
                     case 'business':
                         await seleccionar_asiento_tarifa_business(countPasajeros);
                         break;
@@ -61,11 +82,13 @@ const SeatPage: TSeatPage = {
                         await seleccionar_asiento_emergency(countPasajeros);
                         break;
                 }
-            }
+
+        }
         catch (error) {
-            console.error("ASIENTOS IDA => Ocurrió un error al verificar los asientos de ida | Error: ", error);
+            console.error("SELECCION ASIENTOS => Ocurrió un error al seleccionar los asientos | Error: ", error);
             throw error;
         }
+
     },
 
     async seleccionar_asiento_tarifa_business(numero_pasajeros): Promise<void> {
@@ -205,6 +228,9 @@ const SeatPage: TSeatPage = {
                         if(i < num_pasajeros){
                             let elemNombreAsientoEmergency = asientosEmergency[i] as HTMLElement;
                             nombreAsientoEmrgency = elemNombreAsientoEmergency.innerText;
+                            nombreAsientoEmrgency = nombreAsientoEmrgency.replace('Asiento:\n','');
+                            console.log('nombreAsientoEmrgency***********'+ nombreAsientoEmrgency);
+                            elemNombreAsientoEmergency.click();
                         
                         }else{
                             break;

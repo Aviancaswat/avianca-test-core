@@ -1,6 +1,7 @@
 
 interface SeatCopy {
     tarifaDeAsientos: string,
+    cambiarAsientosSeleccionados: boolean,
     es: {
         pagar: string,
     },
@@ -17,6 +18,7 @@ interface SeatCopy {
 
 export const copySeat: SeatCopy = {
     tarifaDeAsientos: 'economy',
+    cambiarAsientosSeleccionados: false,
     es: {
         pagar: 'Ir a pagar',
     },
